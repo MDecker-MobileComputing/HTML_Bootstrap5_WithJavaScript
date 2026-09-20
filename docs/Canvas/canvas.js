@@ -1,29 +1,29 @@
 "use strict";
 
 
-/** Referenz auf <canvas>-Element. */
-let zeichenflaeche = null;
+/** Reference to <canvas> element. */
+let drawingSurface = null;
 
-/** Referenz auf grafischen Kontext für Zeichnen in <canvas>-Element. */
-let zeichenKontext = null;
+/** Reference to the 2D drawing context for the <canvas> element. */
+let drawingContext = null;
 
-let zeichenflaecheBreite = -1;
-let zeichenflaecheHoehe  = -1;
+let drawingSurfaceWidth = -1;
+let drawingSurfaceHeight = -1;
 
-/** Referenz auf <input>-Element für Schalter "Füllen". */
-let schalterFuellen = null;
+/** Reference to the <input> element for the "Fill" switch. */
+let fillToggle = null;
 
-/** Referenz auf mit Chart.js erzeugtes Diagramm */
-let chartJsDiagramm = null;
+/** Reference to the chart created with Chart.js */
+let chartJsDiagram = null;
 
 
 /**
- * Optionen-Objekt für Chart.js-Diagramme.
+ * Options object for Chart.js charts.
  *
- * Die Optionen responsive=false und maintainAspectRatio=false verhindern,
- * dass das Diagramm die Größe des Canvas-Elements anpasst.
+ * The options responsive=false and maintainAspectRatio=false prevent the chart
+ * from resizing itself to fit the canvas element.
  */
-const chartjsOptionen = {
+const chartJsOptions = {
                             responsive: false,
                             maintainAspectRatio: false,
                             scales: {
@@ -33,398 +33,392 @@ const chartjsOptionen = {
 
 
 /**
- * Diese Funktion wird aufgerufen, wenn das Dokument inkl. aller
- * Ressourcen (z.B. Bilder oder Stylesheets) geladen wurde.
+ * This function is called when the document including all
+ * resources (e.g. images or stylesheets) has finished loading.
  *
- * Es werden Referenzen auf die benötigten DOM-Elemente geholt und
- * die Event-Handler-Funktionen registriert.
+ * References to the needed DOM elements are retrieved and the event handler
+ * functions are registered.
  */
 window.addEventListener( "load", function() {
 
-    zeichenflaeche = document.getElementById( "zeichenflaeche" );
-    if ( !zeichenflaeche ) {
+    drawingSurface = document.getElementById( "drawingSurface" );
+    if ( !drawingSurface ) {
 
-        console.error( "Canvas-Element nicht gefunden." );
+        console.error( "Canvas element not found." );
 
     } else {
 
-        zeichenKontext = zeichenflaeche.getContext( "2d" );
-        if ( !zeichenKontext ) {
+        drawingContext = drawingSurface.getContext( "2d" );
+        if ( !drawingContext ) {
 
-            console.error( "2D-Zeichenkontext konnte nicht abgerufen werden." );
+            console.error( "2D drawing context could not be retrieved." );
         }
 
-        canvasGroesseSetzen();
+        setCanvasSize();
     }
 
 
-    schalterFuellen = document.getElementById( "schalterFuellen" );
-    if ( !schalterFuellen ) {
+    fillToggle = document.getElementById( "fillToggle" );
+    if ( !fillToggle ) {
 
-        console.error( "Schalter 'Füllen' nicht gefunden." );
+        console.error( "Toggle 'Fill' not found." );
     }
 
-    registriereEventHandlerFuerForm( "diagonalen", zeichneDiagonalen  );
-    registriereEventHandlerFuerForm( "dreieck"   , zeichneDreieck     );
-    registriereEventHandlerFuerForm( "rechteck"  , zeichneRechteck    );
-    registriereEventHandlerFuerForm( "kreis"     , zeichneKreis       );
-    registriereEventHandlerFuerForm( "ellipse"   , zeichneEllipse     );
-    registriereEventHandlerFuerForm( "bezier"    , zeichneBezierkurve );
+    registerClickHandlerForShape( "diagonals", drawDiagonals   );
+    registerClickHandlerForShape( "triangle" , drawTriangle    );
+    registerClickHandlerForShape( "rectangle", drawRectangle   );
+    registerClickHandlerForShape( "circle"   , drawCircle      );
+    registerClickHandlerForShape( "ellipse"  , drawEllipse     );
+    registerClickHandlerForShape( "bezier"   , drawBezierCurve );
 
-    registriereEventHandlerFuerForm( "kuchen"    , zeichneChartJsKuchendiagramm );
-    registriereEventHandlerFuerForm( "balken"    , zeichneChartJsBalkendiagramm );
-    registriereEventHandlerFuerForm( "linien"    , zeichneChartJsLiniendiagramm );
+    registerClickHandlerForShape( "pieChart" , drawPieChart  );
+    registerClickHandlerForShape( "barChart" , drawBarChart  );
+    registerClickHandlerForShape( "lineChart", drawLineChart );
 
-    console.log( "Initialisierung abgeschlossen." );
+    console.log( "Initialization complete." );
 });
 
 
 /**
- * Event-Handler-Funktion für Event "resize"; wird aufgerufen,
- * wenn die Größe des Viewports geändert wird.
+ * Event handler for the "resize" event; called when the viewport size changes.
  */
 window.addEventListener( "resize", function() {
 
-    canvasGroesseSetzen();
+    setCanvasSize();
 });
 
 
 /**
- * Größe von <canvas>-Element programmatisch in Abhängigkeit aktueller
- * Viewport-Größe setzen, damit keine unscharfen Linien entstehen.
- * Es werden sowohl die interne Größe des Elements als auch die
- * CSS-Größe (=Größe auf Bildschirm) auf dieselben Werte gesetzt.
+ * Set the size of the <canvas> element programmatically based on the current
+ * viewport size so that lines remain sharp.
+ * Both the internal size of the element and the CSS size (screen size) are set
+ * to the same values.
  *
- * siehe auch: https://stackoverflow.com/a/61902385/1364368
+ * See also: https://stackoverflow.com/a/61902385/1364368
  *
- * Nachteil der Lösung: bei Resize verschwinden die gezeichneten Elemente wieder.
+ * Drawback: when resizing, the previously drawn elements disappear again.
  */
-function canvasGroesseSetzen() {
+function setCanvasSize() {
 
-    zeichenflaecheBreite =  80 * window.innerWidth  / 100;
-    zeichenflaecheHoehe  =  50 * window.innerHeight / 100 || 766; // 766: Fallback-Wert für innerHeight===null
+    drawingSurfaceWidth  = 80 * window.innerWidth / 100;
+    drawingSurfaceHeight = 50 * window.innerHeight / 100 || 766; // 766: fallback for innerHeight === null
 
-    zeichenflaeche.width        = zeichenflaecheBreite;
-    zeichenflaeche.height       = zeichenflaecheHoehe;
-    zeichenflaeche.style.width  = zeichenflaecheBreite;
-    zeichenflaeche.style.height = zeichenflaecheHoehe;
+    drawingSurface.width        = drawingSurfaceWidth;
+    drawingSurface.height       = drawingSurfaceHeight;
+    drawingSurface.style.width  = drawingSurfaceWidth;
+    drawingSurface.style.height = drawingSurfaceHeight;
 
-    console.log( "Canvas-Größe wurde neu gesetzt." );
+    console.log( "Canvas size was reset." );
 }
 
 
 /**
- * Event-Handler-Funktion für Event "click" setzen.
+ * Set an event handler for a click event.
  *
- * @param {*} id ID des Elements, für das die Event-Handler-Funktion gesetzt werden soll
- *
- * @param {*} eventHandlerFunktion Event-Handler-Funktion
+ * @param {*} id ID of the element for which the event handler should be registered
+ * @param {*} eventHandlerFunction Event-handler function
  */
-function registriereEventHandlerFuerForm( id, eventHandlerFunktion ) {
+function registerClickHandlerForShape( id, eventHandlerFunction ) {
 
     const element = document.getElementById( id )
     if ( element ) {
 
-        element.addEventListener( "click",  eventHandlerFunktion );
-        console.log( `Event-Handler für ID "${id}" registriert.` );
+        element.addEventListener( "click", eventHandlerFunction );
+        console.log( `Event handler for ID "${id}" registered.` );
 
     } else {
 
-        console.error( `Element mit ID "${id}" nicht gefunden.` );
+        console.error( `Element with ID "${id}" not found.` );
     }
 }
 
 
 /**
- * Zeichenfläche löschen; sollte zu Beginn von jeder
- * zeichneXXX()-Funktion aufgerufen werden.
+ * Clear the drawing surface; should be called at the start of every drawXXX() function.
  */
-function zeichenflaecheLoeschen() {
+function clearDrawingSurface() {
 
-    zeichenKontext.clearRect( 0, 0,
-                              zeichenflaecheBreite,
-                              zeichenflaecheHoehe );
+    drawingContext.clearRect( 0, 0,
+                              drawingSurfaceWidth,
+                              drawingSurfaceHeight );
 }
 
 
 /**
- * Funktion um gezeichnete Form zu füllen, aber nur,
- * wenn dies mit dem Schalter vom Nutzer aktiviert ist.
- * Diese Funktion darf nur am Ende von zeichneXXX()-Funktionen
- * aufgerufen werden, die eine Form zeichnen, die eine
- * geschlossene Fläche hat. in zeichneXXX()-Funktionen, die
- * diese Funktion aufrufen, sollte "black" als strokeStyle
- * (also Farbe für den Rand der Fläche) verwendet werden.
+ * Function to fill a drawn shape, but only when enabled by the user switch.
+ * This function should only be called at the end of drawXXX() functions that draw a
+ * shape with a closed area. In drawXXX() functions that call this method, use "black"
+ * as the strokeStyle (i.e. the border color of the filled area).
  */
-function beiBedarfFuellen() {
+function fillIfNeeded() {
 
-    if ( schalterFuellen.checked ) {
+    if ( fillToggle.checked ) {
 
-        zeichenKontext.fillStyle = "orange";
-        zeichenKontext.fill();
+        drawingContext.fillStyle = "orange";
+        drawingContext.fill();
     }
 }
 
 
 /**
- * Funktion um Diagonalen auf Canvas einzuzeichnen.
+ * Function to draw diagonals on the canvas.
  */
-function zeichneDiagonalen() {
+function drawDiagonals() {
 
-    zeichenflaecheLoeschen();
+    clearDrawingSurface();
 
-    // Diagonale 1: von links oben nach rechts unten
-    zeichenKontext.strokeStyle = "red";
-    zeichenKontext.beginPath();
-    zeichenKontext.moveTo( 0, 0 );
-    zeichenKontext.lineTo( zeichenflaecheBreite, zeichenflaecheHoehe );
-    zeichenKontext.stroke();
+    // Diagonal 1: from top left to bottom right
+    drawingContext.strokeStyle = "red";
+    drawingContext.beginPath();
+    drawingContext.moveTo( 0, 0 );
+    drawingContext.lineTo( drawingSurfaceWidth, drawingSurfaceHeight );
+    drawingContext.stroke();
 
 
-    // Diagonale 2: von links unten nach rechts oben
-    zeichenKontext.strokeStyle = "blue";
-    zeichenKontext.beginPath();
-    zeichenKontext.moveTo( 0, zeichenflaecheHoehe );
-    zeichenKontext.lineTo( zeichenflaecheBreite, 0 );
-    zeichenKontext.stroke();
+    // Diagonal 2: from bottom left to top right
+    drawingContext.strokeStyle = "blue";
+    drawingContext.beginPath();
+    drawingContext.moveTo( 0, drawingSurfaceHeight );
+    drawingContext.lineTo( drawingSurfaceWidth, 0 );
+    drawingContext.stroke();
 }
 
 
 /**
- * Funktion um Dreieck auf Canvas einzuzeichnen.
+ * Function to draw a triangle on the canvas.
  */
-function zeichneDreieck() {
+function drawTriangle() {
 
-    zeichenflaecheLoeschen();
+    clearDrawingSurface();
 
-    const abstandRand = 5;
+    const margin = 5;
 
-    // Punkt A: oben mitte
-    const ax = zeichenflaecheBreite / 2;
-    const ay = abstandRand;
+    // Point A: top center
+    const ax = drawingSurfaceWidth / 2;
+    const ay = margin;
 
-    // Punkt B: links unten
-    const bx = abstandRand;
-    const by = zeichenflaecheHoehe - abstandRand;
+    // Point B: bottom left
+    const bx = margin;
+    const by = drawingSurfaceHeight - margin;
 
-    // Punkt C: rechts unten
-    const cx = zeichenflaecheBreite - abstandRand;
+    // Point C: bottom right
+    const cx = drawingSurfaceWidth - margin;
     const cy = by;
 
-    zeichenKontext.strokeStyle = "black";
+    drawingContext.strokeStyle = "black";
 
-    zeichenKontext.beginPath();
-    zeichenKontext.moveTo( ax, ay );
-    zeichenKontext.lineTo( bx, by );
-    zeichenKontext.lineTo( cx, cy );
-    zeichenKontext.closePath();
+    drawingContext.beginPath();
+    drawingContext.moveTo( ax, ay );
+    drawingContext.lineTo( bx, by );
+    drawingContext.lineTo( cx, cy );
+    drawingContext.closePath();
 
-    zeichenKontext.stroke(); // Rand zeichnen
+    drawingContext.stroke(); // draw border
 
-    beiBedarfFuellen();
+    fillIfNeeded();
 }
 
 
 /**
- * Funktion um Rechteck auf Canvas zu zeichnen.
+ * Function to draw a rectangle on the canvas.
  */
-function zeichneRechteck() {
+function drawRectangle() {
 
-    zeichenflaecheLoeschen();
+    clearDrawingSurface();
 
-    const abstandRand = 10;
+    const margin = 10;
 
-    const breite = zeichenflaecheBreite - 2*abstandRand;
-    const hoehe  = zeichenflaecheHoehe  - 2*abstandRand;
+    const width  = drawingSurfaceWidth  - 2 * margin;
+    const height = drawingSurfaceHeight - 2 * margin;
 
-    zeichenKontext.strokeStyle = "black";
+    drawingContext.strokeStyle = "black";
 
-    // Rechteck zeichnen
-    zeichenKontext.beginPath();
-    zeichenKontext.rect( abstandRand,  // x
-                         abstandRand,  // y
-                         breite, hoehe );
-    zeichenKontext.stroke();
+    // Draw rectangle
+    drawingContext.beginPath();
+    drawingContext.rect( margin,  // x
+                         margin,  // y
+                         width, height );
+    drawingContext.stroke();
 
-    beiBedarfFuellen();
+    fillIfNeeded();
 }
 
 
 /**
- * Funktion um Kreis auf Canvas zu zeichnen.
+ * Function to draw a circle on the canvas.
  */
-function zeichneKreis() {
+function drawCircle() {
 
-    zeichenflaecheLoeschen();
+    clearDrawingSurface();
 
-    const mittelpunktX = zeichenflaecheBreite / 2;
-    const mittelpunktY = zeichenflaecheHoehe  / 2;
+    const centerX = drawingSurfaceWidth  / 2;
+    const centerY = drawingSurfaceHeight / 2;
 
-    const radius = 0.4 * Math.min( zeichenflaecheBreite,
-                                   zeichenflaecheHoehe );
+    const radius = 0.4 * Math.min( drawingSurfaceWidth,
+                                   drawingSurfaceHeight );
 
-    zeichenKontext.strokeStyle = "black";
+    drawingContext.strokeStyle = "black";
 
-    zeichenKontext.beginPath();
-    zeichenKontext.arc( mittelpunktX, mittelpunktY,
+    drawingContext.beginPath();
+    drawingContext.arc( centerX, centerY,
                         radius,
-                        0,          // Startwinkel
-                        2 * Math.PI // Endwinkel
+                        0, // start angle
+                        2 * Math.PI // end angle
                       );
-    zeichenKontext.stroke();
+    drawingContext.stroke();
 
-    beiBedarfFuellen();
+    fillIfNeeded();
 }
 
 
 /**
- * Funktion um Ellpise auf Canvas zu zeichnen.
+ * Function to draw an ellipse on the canvas.
  */
-function zeichneEllipse() {
+function drawEllipse() {
 
-    zeichenflaecheLoeschen();
+    clearDrawingSurface();
 
-    const mittelpunktX = zeichenflaecheBreite / 2;
-    const mittelpunktY = zeichenflaecheHoehe  / 2;
+    const centerX = drawingSurfaceWidth  / 2;
+    const centerY = drawingSurfaceHeight / 2;
 
-    const radiusHorizontal = zeichenflaecheBreite * 0.5 * 0.9;
-    const radiusVertikal   = zeichenflaecheHoehe  * 0.5 * 0.4;
+    const horizontalRadius = drawingSurfaceWidth  * 0.5 * 0.9;
+    const verticalRadius   = drawingSurfaceHeight * 0.5 * 0.4;
 
-    zeichenKontext.strokeStyle = "black";
+    drawingContext.strokeStyle = "black";
 
-    zeichenKontext.beginPath();
-    zeichenKontext.ellipse( mittelpunktX    , mittelpunktY,
-                            radiusHorizontal, radiusVertikal,
-                            0,          // Rotation
-                            0,          // Startwinkel
-                            2 * Math.PI // Endwinkel
-                          );
-    zeichenKontext.stroke();
+    drawingContext.beginPath();
+    drawingContext.ellipse( centerX, centerY,
+                            horizontalRadius, verticalRadius,
+                            0, // rotation
+                            0, // start angle
+                            2 * Math.PI // end angle
+                         );
+    drawingContext.stroke();
 
-    beiBedarfFuellen();
+    fillIfNeeded();
 }
 
 
 /**
- * Funktion um Bezierkurve im Canvas-Element zu zeichnen.
+ * Function to draw a Bézier curve in the canvas element.
  */
-function zeichneBezierkurve() {
+function drawBezierCurve() {
 
-    zeichenflaecheLoeschen();
+    clearDrawingSurface();
 
-    const startpunktX = 0;
-    const startpunktY = 0;
-    const endpunktX   = zeichenflaecheBreite;
-    const endpunktY   = zeichenflaecheHoehe;
+    const startX = 0;
+    const startY = 0;
+    const endX = drawingSurfaceWidth;
+    const endY = drawingSurfaceHeight;
 
-    // Kontrollpunkt 1
-    const kp1x = zeichenflaecheBreite * 0.2;
-    const kp1y = zeichenflaecheHoehe  * 0.8;
+    // Control point 1
+    const cp1x = drawingSurfaceWidth  * 0.2;
+    const cp1y = drawingSurfaceHeight * 0.8;
 
-    // Kontrollpunkt 2
-    const kp2x = zeichenflaecheBreite * 0.8;
-    const kp2y = zeichenflaecheHoehe  * 0.2;
+    // Control point 2
+    const cp2x = drawingSurfaceWidth  * 0.8;
+    const cp2y = drawingSurfaceHeight * 0.2;
 
-    zeichenKontext.strokeStyle = "red";
+    drawingContext.strokeStyle = "red";
 
-    zeichenKontext.beginPath();
-    zeichenKontext.moveTo( startpunktX, startpunktY );
-    zeichenKontext.bezierCurveTo( kp1x, kp1y, kp2x, kp2y, endpunktX, endpunktY );
-    zeichenKontext.stroke();
+    drawingContext.beginPath();
+    drawingContext.moveTo( startX, startY );
+    drawingContext.bezierCurveTo( cp1x, cp1y, cp2x, cp2y, endX, endY );
+    drawingContext.stroke();
 }
 
 
 /**
- * Funktion um mit Chart.js ein Kuchendiagramm im Canvas-Element zu zeichnen.
+ * Function to draw a pie chart in the canvas element using Chart.js.
  */
-function zeichneChartJsKuchendiagramm() {
+function drawPieChart() {
 
-    if ( chartJsDiagramm ) { chartJsDiagramm.destroy(); }
+    if ( chartJsDiagram ) { chartJsDiagram.destroy(); }
 
-    const datenObjekt = {
-                            labels: [ "Partei A", "Partei B", "Partei C", "Ungültig" ],
+    const dataObject = {
+                            labels: [ "Party A", "Party B", "Party C", "Invalid" ],
                             datasets: [
                                 {
-                                    label: "Anzahl Stimmen",
-                                    data: [ 25, 40, 66, 10 ], // absolute Zahlen, keine Prozentwerte!
+                                    label: "Votes",
+                                    data: [ 25, 40, 66, 10 ], // absolute numbers, not percentages!
                                     borderWidth: 1
                                 }
                             ]
                         };
 
-    const chartObjekt = {
+    const chartObject = {
                             type   : "pie",
-                            data   : datenObjekt,
-                            options: chartjsOptionen
+                            data   : dataObject,
+                            options: chartJsOptions
                         };
 
-    chartJsDiagramm = new Chart( zeichenKontext, chartObjekt );
+    chartJsDiagram = new Chart( drawingContext, chartObject );
 }
 
 
 /**
- * Funktion um mit Chart.js ein Balkendiagramm im Canvas-Element zu zeichnen.
+ * Function to draw a bar chart in the canvas element using Chart.js.
  */
-function zeichneChartJsBalkendiagramm() {
+function drawBarChart() {
 
-    if ( chartJsDiagramm ) { chartJsDiagramm.destroy(); }
+    if ( chartJsDiagram ) { chartJsDiagram.destroy(); }
 
-    const datenObjekt = {
+    const dataObject = {
 
-        labels: ["Firma A", "Firma B", "Firma C", "Firma D" ],
+        labels: [ "Company A", "Company B", "Company C", "Company D" ],
         datasets: [
             {
-                label: "Verkaufszahlen 2022",
+                label: "Sales 2022",
                 data: [ 20500, 10300, 5100, 16300 ],
                 borderWidth: 1
             },
             {
-                label: "Verkaufszahlen 2023",
+                label: "Sales 2023",
                 data: [ 19100, 12300, 4100, 17300 ],
                 borderWidth: 1
             }
         ]
     };
 
-    const chartObjekt = {
+    const chartObject = {
                             type   : "bar",
-                            data   : datenObjekt,
-                            options: chartjsOptionen
+                            data   : dataObject,
+                            options: chartJsOptions
                         };
 
-    chartJsDiagramm = new Chart( zeichenKontext, chartObjekt );
+    chartJsDiagram = new Chart( drawingContext, chartObject );
 }
 
 
 /**
- * Funktion um mit Chart.js ein Balkendiagramm im Canvas-Element zu zeichnen.
+ * Function to draw a line chart in the canvas element using Chart.js.
  */
-function zeichneChartJsLiniendiagramm() {
+function drawLineChart() {
 
-    if ( chartJsDiagramm ) { chartJsDiagramm.destroy(); }
+    if ( chartJsDiagram ) { chartJsDiagram.destroy(); }
 
-    const datenObjekt = {
+    const dataObject = {
 
-        labels: [ "Januar", "Februar", "März", "April", "Mai", "Juni" ],
+        labels: [ "January", "February", "March", "April", "May", "June" ],
         datasets: [
             {
-                label: "Land A",
+                label: "Country A",
                 data: [ 10, 15, 22, 40, 51, 60 ],
                 borderWidth: 1
               },
               {
-                label: "Land B",
+                label: "Country B",
                 data: [ 4, 15, 8, 55, 35, 32 ],
                 borderWidth: 1
               }
         ]
     };
 
-    const chartObjekt = {
+    const chartObject = {
         type   : "line",
-        data   : datenObjekt,
-        options: chartjsOptionen
+        data   : dataObject,
+        options: chartJsOptions
     };
 
-    chartJsDiagramm = new Chart( zeichenKontext, chartObjekt );
+    chartJsDiagram = new Chart( drawingContext, chartObject );
 }

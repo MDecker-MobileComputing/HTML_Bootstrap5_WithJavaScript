@@ -137,7 +137,7 @@ function displayNews( newsItems, domesticOnly ) {
                                 "d-flex",
                                 "justify-content-between",
                                 "align-items-center"
-                             );
+                              );
         listItem.textContent = headlineText;
 
         if ( !domesticOnly ) {

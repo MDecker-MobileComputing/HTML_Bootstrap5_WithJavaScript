@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
     <head>
         <meta charset="utf-8" >
-        <title>Canvas-Element und Bootstrap 5</title>
+        <title>Canvas Element and Bootstrap 5</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"       integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" rel="stylesheet">
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+              integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+              crossorigin="anonymous"
+              rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
         <link rel="stylesheet" type="text/css" href="canvas.css">
     </head>
@@ -13,53 +15,53 @@
 
         <div class="container-sm my-3">
 
-            <h1 class="text-center mt-3 mb-5">Canvas-Element und Bootstrap 5</h1>
+            <h1 class="text-center mt-3 mb-5">Canvas Element and Bootstrap 5</h1>
 
             <p>
-                Mit dem Canvas-Element von HTML5 können beliebige geometrische Formen gezeichnet werden – probieren Sie es aus!
+                The HTML5 canvas element can be used to draw any geometric shapes — try it out!
             </p>
 
             <div class="btn-group my-4">
 
                 <div class="dropdown me-2">
                     <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Gerade und eckig
+                        Straight and angular
                     </button>
                     <ul class="dropdown-menu">
-                        <li><a id="diagonalen" class="dropdown-item">Diagonalen</a></li>
+                        <li><a id="diagonals" class="dropdown-item">Diagonals</a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a id="dreieck"    class="dropdown-item">Dreieck</a></li>
-                        <li><a id="rechteck"   class="dropdown-item">Rechteck</a></li>
+                        <li><a id="triangle"  class="dropdown-item">Triangle</a></li>
+                        <li><a id="rectangle" class="dropdown-item">Rectangle</a></li>
                     </ul>
                 </div>
 
                 <div class="dropdown me-2">
                     <button class="btn btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Rund und gebogen
+                        Round and curved
                     </button>
                     <ul class="dropdown-menu">
-                        <li><a id="kreis"   class="dropdown-item">Kreis</a></li>
+                        <li><a id="circle"  class="dropdown-item">Circle</a></li>
                         <li><a id="ellipse" class="dropdown-item">Ellipse</a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a id="bezier"  class="dropdown-item">Bézierkurve</a></li>
+                        <li><a id="bezier"  class="dropdown-item">Bézier curve</a></li>
                     </ul>
                 </div>
 
                 <div class="dropdown">
                     <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Diagramme mit Chart.js
+                        Charts with Chart.js
                     </button>
                     <ul class="dropdown-menu">
-                        <li><a id="kuchen" class="dropdown-item">Kuchendiagramm</a></li>
-                        <li><a id="balken" class="dropdown-item">Balkendiagramm</a></li>
-                        <li><a id="linien" class="dropdown-item">Liniendiagramm</a></li>
+                        <li><a id="pieChart"  class="dropdown-item">Pie chart</a></li>
+                        <li><a id="barChart"  class="dropdown-item">Bar chart</a></li>
+                        <li><a id="lineChart" class="dropdown-item">Line chart</a></li>
                     </ul>
                 </div>
 
                 <div class="form-check form-switch ms-5">
 
-                    <input id="schalterFuellen" class="form-check-input" type="checkbox" role="switch"  >
-                    <label class="form-check-label" for="schalterFuellen">geschlossene Flächen füllen</label>
+                    <input id="fillToggle" class="form-check-input" type="checkbox" role="switch"  >
+                    <label class="form-check-label" for="fillToggle">Fill closed areas</label>
 
                     <i id="infoIcon"
                        class="fas fa-info-circle ms-2"
@@ -70,8 +72,8 @@
                        aria-controls="collapseBox"></i>
                     <div id="collapseBox" class="collapse">
                         <div class="card card-body">
-                          Diese Option gilt natürlich nur für Formen, die eine geschlossene Fläche bilden, z.B. Kreis oder Ellipse.
-                          Die Option wird nur bei Neu-Auswahl von Formen berücksichtigt.
+                          This option naturally applies only to shapes that form a closed area, e.g. circles or ellipses.
+                          The option is only considered when shapes are selected again.
                         </div>
                     </div>
 
@@ -81,14 +83,17 @@
 
             <div class="d-flex justify-content-center align-items-center">
 
-                <canvas id="zeichenflaeche">
-                    Ihr Browser unterstützt das Canvas-Element (Zeichenfläche) von HTML5 nicht.
+                <canvas id="drawingSurface">
+                    Your browser does not support the HTML5 canvas element (drawing surface).
                 </canvas>
 
             </div>
 
         </div><!-- container -->
 
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+                integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+                crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script src="./canvas.js"></script>
 
