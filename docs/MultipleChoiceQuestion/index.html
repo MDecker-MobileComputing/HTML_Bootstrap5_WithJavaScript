@@ -1,21 +1,23 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
     <head>
         <meta charset="utf-8" >
-        <title>Bootstrap 5: Single-Choice-Quiz</title>
+        <title>Bootstrap 5: Multiple-Choice Quiz</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"       integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" rel="stylesheet">
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+              integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+              crossorigin="anonymous"
+              rel="stylesheet">
     </head>
     <body>
 
         <div class="container-sm my-3">
 
-            <h1 class="text-center mt-3 mb-5">Multiple-Choice-Quiz (Bootstrap 5)</h1>
+            <h1 class="text-center mt-3 mb-5">Multiple-Choice Quiz (Bootstrap 5)</h1>
 
-            <p>Welche der folgenden Planeten liegen näher an der Sonne als die Erde?</p>
+            <p>Which of the following planets are closer to the Sun than Earth?</p>
 
-            <div><!-- Formular -->
+            <div><!-- Form -->
 
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" id="checkboxJupiter" value="">
@@ -26,8 +28,8 @@
                     <label class="form-check-label" for="checkboxMars">Mars</label>
                 </div>
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="checkboxMerkur" value="">
-                    <label class="form-check-label" for="checkboxMerkur">Merkur</label>
+                    <input class="form-check-input" type="checkbox" id="checkboxMercury" value="">
+                    <label class="form-check-label" for="checkboxMercury">Mercury</label>
                 </div>
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" id="checkboxNeptun" value="">
@@ -50,25 +52,25 @@
                     <button id="buttonAntwortPruefen"
                             class="btn btn-primary"
                             data-bs-toggle="tooltip"
-                            data-bs-title="Wählen Sie mindestens einen Planeten aus"
-                            >Antwort überprüfen</button>
+                            data-bs-title="Select at least one planet"
+                            >Check answer</button>
                 </div>
 
-            </div><!-- Formular -->
+            </div><!-- Form -->
 
 
             <div id="modalErgebnis" class="modal" tabindex="-1">
                 <div class="modal-dialog">
                   <div class="modal-content">
                     <div class="modal-header">
-                      <h5 id="modalErgebnisTitel" class="modal-title">wird ersetzt</h5>
+                      <h1 id="modalErgebnisTitel" class="modal-title">Result</h1>
                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                       <p id="modalErgebnisNachricht"></p>
                     </div>
                     <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Weiter</button>
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Continue</button>
                     </div>
                   </div>
                 </div>
@@ -76,7 +78,10 @@
 
        </div><!-- container -->
 
-       <script src="./quiz-multiple-choice.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+              integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+              crossorigin="anonymous"></script>       
+       <script src="./multiple-choice-question.js"></script>
 
     </body>
 </html>
