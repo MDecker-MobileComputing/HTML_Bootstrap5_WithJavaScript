@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
     <head>
         <meta charset="utf-8" >
         <title>Bootstrap 5: Bad News</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"       integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" rel="stylesheet">
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+              integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+              crossorigin="anonymous"
+              rel="stylesheet">
     </head>
     <body>
 
@@ -21,38 +23,40 @@
 
             <div class="row gx-3 justify-content-center">
                 <div class="d-flex align-items-center col-sm-8">
-                    <label for="rangeAnzahl" class="form-label me-2">Anzahl:</label>
-                    <input id="rangeAnzahl" class="form-range" type="range" min="1" max="30" value="5">
-                    <div id="divAnzahl" class="ms-2">5</div>
+                    <label for="rangeCount" class="form-label me-2">Amount:</label>
+                    <input id="rangeCount" class="form-range" type="range" min="1" max="30" value="5">
+                    <div id="countDisplay" class="ms-2">5</div>
                 </div>
             </div>
 
             <div class="row gx-3 justify-content-center mt-2">
                 <div class="d-flex justify-content-center form-check col-sm-4">
-                    <input id="checkboxNurInland" class="form-check-input me-2" type="checkbox">
-                    <label class="form-check-label" for="checkboxNurInland">Nur Inland</label>
+                    <input id="checkboxDomesticOnly" class="form-check-input me-2" type="checkbox">
+                    <label class="form-check-label" for="checkboxDomesticOnly">Domestic only</label>
                 </div>
             </div>
 
             <div class="row gx-3 justify-content-center mt-3">
-                <button id="buttonNewsHolen" class="btn btn-primary col-sm-6">Nachrichten laden</button>
+                <button id="buttonLoadNews" class="btn btn-primary col-sm-6">Load news</button>
             </div>
             <div class="row gx-3 justify-content-center mt-3">
-                <button id="buttonZuruecksetzen" class="btn btn-secondary col-sm-6">Zurücksetzen</button>
+                <button id="buttonReset" class="btn btn-secondary col-sm-6">Reset</button>
             </div>
 
 
             <div class="row justify-content-center mb-3">
                 <div class="col-lg-8 col-md-10">
-                    <ul id="listGroupNachrichten" class="list-group mt-5">
-                        <!-- hier werden die Nachrichten als Kind-Elemente eingefügt -->
+                    <ul id="listGroupNews" class="list-group mt-5">
+                        <!-- news items are inserted here as child elements -->
                     </ul>
                 </div>
             </div>
 
         </div><!-- container-sm -->
 
-
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+                integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+                crossorigin="anonymous"></script>
         <script src="./bad-news.js"></script>
 
     </body>

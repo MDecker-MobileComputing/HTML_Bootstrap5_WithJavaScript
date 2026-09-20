@@ -1,165 +1,164 @@
 "use strict";
 
-let ulNachrichten     = null;
-let checkboxNurInland = null;
-let rangeAnzahl       = null;
-let divAnzahl         = null;
+let newsList             = null;
+let checkboxDomesticOnly = null;
+let rangeCount           = null;
+let countDisplay         = null;
 
 
 /**
- * Diese Funktion wird aufgerufen, wenn das Dokument inkl. aller
- * Ressourcen (z.B. Bilder oder Stylesheets) geladen wurde.
+ * This function is called when the document including all
+ * resources (e.g. images or stylesheets) has finished loading.
  */
 window.addEventListener( "load", function () {
 
-    let buttonLaden = document.getElementById( "buttonNewsHolen" );
-    if ( buttonLaden ) {
+    let loadButton = document.getElementById( "buttonLoadNews" );
+    if ( loadButton ) {
 
-        buttonLaden.addEventListener( "click", onButtonSchlagzeilenLaden );
-
-    } else {
-
-        console.error( "Button 'Nachrichten laden' nicht gefunden!" );
-    }
-
-    let buttonZuruecksetzen = document.getElementById( "buttonZuruecksetzen" );
-    if ( buttonZuruecksetzen ) {
-
-        buttonZuruecksetzen.addEventListener( "click", onButtonZuruecksetzen );
+        loadButton.addEventListener( "click", onLoadNewsButton );
 
     } else {
 
-        console.error( "Button 'Zurücksetzen' nicht gefunden!" );
+        console.error( "Button 'Load news' not found!" );
     }
 
-    ulNachrichten = document.getElementById( "listGroupNachrichten" );
-    if ( !ulNachrichten ) {
+    let resetButton = document.getElementById( "buttonReset" );
+    if ( resetButton ) {
 
-        console.error( "Wurzelelement für Nachrichtenliste nicht gefunden!" );
-    }
-
-    checkboxNurInland = document.getElementById( "checkboxNurInland" );
-    if ( !checkboxNurInland ) {
-
-        console.error( "Checkbox für 'Nur Inland' nicht gefunden!" );
-    }
-
-    rangeAnzahl = document.getElementById( "rangeAnzahl" );
-    if ( rangeAnzahl ) {
-
-        rangeAnzahl.addEventListener( "input", onNeueAnzahl );
+        resetButton.addEventListener( "click", onResetButton );
 
     } else {
 
-        console.error( "Range-Element 'Anzahl' nicht gefunden!" );
+        console.error( "Button 'Reset' not found!" );
     }
 
-    divAnzahl = document.getElementById( "divAnzahl" );
-    if ( !divAnzahl ) {
+    newsList = document.getElementById( "listGroupNews" );
+    if ( !newsList ) {
 
-        console.error( "Element für Anzeige der Anzahl nicht gefunden!" );
+        console.error( "Root element for the news list not found!" );
     }
 
-    console.log( "Initialisierung abgeschlossen." );
+    checkboxDomesticOnly = document.getElementById( "checkboxDomesticOnly" );
+    if ( !checkboxDomesticOnly ) {
+
+        console.error( "Checkbox for 'Domestic only' not found!" );
+    }
+
+    rangeCount = document.getElementById( "rangeCount" );
+    if ( rangeCount ) {
+
+        rangeCount.addEventListener( "input", onCountChange );
+
+    } else {
+
+        console.error( "Range element 'Amount' not found!" );
+    }
+
+    countDisplay = document.getElementById( "countDisplay" );
+    if ( !countDisplay ) {
+
+        console.error( "Element for displaying the count not found!" );
+    }
+
+    console.log( "Initialization complete." );
 });
 
 
 /**
- * Event-Handler-Funktion für Änderungen am Range-Element für die Anzahl der
- * Schlagzeilen.
+ * Event handler for changes to the range element for the number of headlines.
  */
-function onNeueAnzahl() {
+function onCountChange() {
 
-    const anzahl = rangeAnzahl.value;
-    divAnzahl.textContent = anzahl;
+    const count = rangeCount.value;
+    countDisplay.textContent = count;
 }
 
 
 /**
- * Event-Handler für Button zum Zurücksetzen der Anwendung.
+ * Event handler for the button resetting the app.
  */
-function onButtonZuruecksetzen() {
+function onResetButton() {
 
-    // Evtl. angezeigte Nachrichten löschen
-    ulNachrichten.innerHTML = "";
+    // Delete potentially displayed news
+    newsList.innerHTML = "";
 
-    // Eingabefelder zurücksetzen
-    rangeAnzahl.value = 5;
-    onNeueAnzahl();
+    // Reset form fields
+    rangeCount.value = 5;
+    onCountChange();
 
-    checkboxNurInland.checked = false;
+    checkboxDomesticOnly.checked = false;
 }
 
 
 /**
- * Event-Handler für Button zum Laden von Nachrichten von Web-API.
- * Doku der Web-API: https://api.el-decker.de/badnews_doku.html
+ * Event handler for the button loading news from the web API.
+ * API documentation: https://api.el-decker.de/badnews_doku.html
  */
-async function onButtonSchlagzeilenLaden() {
+async function onLoadNewsButton() {
 
-    ulNachrichten.innerHTML = "";
+    newsList.innerHTML = "";
 
-    const anzahl    = rangeAnzahl.value;
-    const nurInland = checkboxNurInland.checked;
-    const url       = `https://api.el-decker.de/badnews.php?anzahl=${anzahl}&nur_inland=${nurInland}`;
+    const count = rangeCount.value;
+    const domesticOnly = checkboxDomesticOnly.checked;
+    const url = `https://api.el-decker.de/badnews.php?anzahl=${count}&nur_inland=${domesticOnly}`;
 
-    console.log( "Nachrichten werden von Web-API geladen ..." );
+    console.log( "Loading news from the web API ..." );
 
     try {
 
-        const antwort = await fetch( url );
-        if (!antwort.ok) {
+        const response = await fetch( url );
+        if (!response.ok) {
 
-            throw new Error( "Fehler beim Laden der Nachrichten: " + antwort.status );
+            throw new Error( "Error loading news: " + response.status );
         }
 
-        const antwortJSON = await antwort.json();
-        nachrichtenAnzeigen( antwortJSON.items, nurInland );
+        const responseJSON = await response.json();
+        displayNews( responseJSON.items, domesticOnly );
     }
-    catch (fehler) {
+    catch (error) {
 
-        console.error( "Fehler beim Laden der Nachrichten: " + fehler );
+        console.error( "Error loading news: " + error );
     }
 }
 
 
 /**
- * Diese Funktion zeigt die Schlagzeilen in der Liste an.
+ * This function displays the headlines in the list.
  */
-function nachrichtenAnzeigen( schlagzeilenItems, nurInland ) {
+function displayNews( newsItems, domesticOnly ) {
 
-    for (let i = 0; i < schlagzeilenItems.length; i++) {
+    for ( let i = 0; i < newsItems.length; i++ ) {
 
-        const schlagzeileText = schlagzeilenItems[i].schlagzeile;
-        const istInland       = schlagzeilenItems[i].inland;
+        const headlineText = newsItems[i].schlagzeile;
+        const isDomestic   = newsItems[i].inland;
 
-        const listeneintrag = document.createElement( "li" );
-        listeneintrag.classList.add( "list-group-item",
-                                     "d-flex",
-                                     "justify-content-between",
-                                     "align-items-center"
-                                   );
-        listeneintrag.textContent = schlagzeileText;
+        const listItem = document.createElement( "li" );
+        listItem.classList.add( "list-group-item",
+                                "d-flex",
+                                "justify-content-between",
+                                "align-items-center"
+                             );
+        listItem.textContent = headlineText;
 
-        if ( !nurInland ) {
+        if ( !domesticOnly ) {
 
             const badge = document.createElement( "span" );
             badge.classList.add( "badge", "ms-2" );
-            if ( istInland ) {
+            if ( isDomestic ) {
 
-                badge.classList.add( "bg-primary" ); // blau
-                badge.textContent = "Inland";
+                badge.classList.add( "bg-primary" ); // blue
+                badge.textContent = "Domestic";
 
             } else {
 
-                badge.classList.add( "bg-success" ); // grün
-                badge.textContent = "Welt";
+                badge.classList.add( "bg-success" ); // green
+                badge.textContent = "World";
             }
 
-            listeneintrag.appendChild( badge );
+            listItem.appendChild( badge );
         }
 
-        ulNachrichten.appendChild( listeneintrag );
+        newsList.appendChild( listItem );
     }
 }
 
