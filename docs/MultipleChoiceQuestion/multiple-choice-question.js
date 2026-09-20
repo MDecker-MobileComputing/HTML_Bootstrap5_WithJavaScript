@@ -43,7 +43,9 @@ window.addEventListener( "load", function () {
         console.error( "Could not find the message element for the result modal!" );
     }
 
-    const tooltipTriggerList = [].slice.call( document.querySelectorAll( "[data-bs-toggle=\"tooltip\"]") );
+    const tooltipTriggerList = [].slice.call(
+        document.querySelectorAll( "[data-bs-toggle=\"tooltip\"]" )
+    );
     tooltipTriggerList.map( function ( tooltipTriggerEl ) {
 
         return new bootstrap.Tooltip( tooltipTriggerEl );
