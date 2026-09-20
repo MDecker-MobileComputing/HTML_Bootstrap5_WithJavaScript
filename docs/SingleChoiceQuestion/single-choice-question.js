@@ -4,8 +4,8 @@ let selectedCity = null;
 
 let checkAnswerButton = null;
 
-let resultModal = null;
-let resultModalTitle = null;
+let resultModal        = null;
+let resultModalTitle   = null;
 let resultModalMessage = null;
 
 
@@ -13,7 +13,7 @@ let resultModalMessage = null;
  * This function is called when the document including all
  * resources (e.g. images or stylesheets) has loaded.
  */
-window.addEventListener("load", function () {
+window.addEventListener( "load", function () {
 
     checkAnswerButton = document.getElementById( "checkAnswerButton" );
     if ( checkAnswerButton ) { // != null && != undefined
@@ -68,20 +68,20 @@ function onCheckAnswerButton() {
 
         case "none":
 
-            resultModalTitle.innerText     = "Error";
+            resultModalTitle.innerText   = "Error";
             resultModalMessage.innerText = "Please select a city.";
             break;
 
         case "hamburg":
 
-            resultModalTitle.innerText     = "Correct";
+            resultModalTitle.innerText   = "Correct";
             resultModalMessage.innerText = "Hamburg is actually farther north than Amsterdam and London.";
             break;
 
         default:
-            resultModalTitle.innerText     = "Incorrect";
+            resultModalTitle.innerText   = "Incorrect";
             resultModalMessage.innerText = "Think again!";
-            selectedCity.value = "none";
+            selectedCity.value           = "none";
     }
 
     resultModal.show();
