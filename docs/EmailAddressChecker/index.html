@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" >
+        <title>Bootstrap 5: Email Address Syntax Check</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+              integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+              crossorigin="anonymous"
+              rel="stylesheet">
+    </head>
+    <body>
+
+        <div class="container-sm">
+
+            <h1 class="text-center my-5">Email Address Syntax Check (Bootstrap 5)</h1><!-- my-5: margin top+bottom -->
+
+            <!-- 
+                 Components of an email address: 
+                 https://www.ionos.de/hilfe/e-mail/glossar-e-mail-fachbegriffe-verstaendlich-erklaert/e-mail-adresse-kurz-erklaert/ 
+             -->
+
+             <div class="input-group mb-3">
+                <span class="form-floating">
+                    <input id="inputLocalPart" type="text" class="form-control" placeholder="" required>
+                    <label for="inputLocalPart">Local part</label>
+                    <span class="valid-feedback">OK</span>
+                    <span class="invalid-feedback">
+                        The local part must contain 1 to 64 characters, and the following characters are allowed: 
+                        letters, numbers, and dots.
+                        Examples: alice, max.mustermann
+                    </span>
+                </span>
+                <div class="input-group-text">@</div>
+                <span class="form-floating">                    
+                    <input id="inputDomain" type="text" class="form-control" placeholder="" required>
+                    <label for="inputDomain">Domain</label>
+                    <span class="valid-feedback">OK</span>
+                    <span class="invalid-feedback">
+                        The domain must contain at least two characters, and the following characters are allowed: 
+                        letters, numbers, and hyphens.
+                        Example: great-company
+                    </span>
+                </span>
+                <div class="input-group-text">.</div>
+                <span class="form-floating">                    
+                    <input id="inputTopLevelDomain" type="text" class="form-control" placeholder="" required>
+                    <label for="inputTopLevelDomain">Top-level domain</label>
+                    <span class="valid-feedback">OK</span>
+                    <span class="invalid-feedback">
+                        The top-level domain must contain at least two letters, 
+                        and no other characters are allowed.
+                        Examples: "com" or "de"
+                    </span>
+                </span>                                                
+            </div>
+
+            <div class="gap-2">
+                <button id="buttonCheck"  class="btn btn-primary col-md-2"  >Check</button>
+                <button id="buttonReset" class="btn btn-secondary col-md-2">Reset</button>
+            </div>
+
+            <!-- Alert for success case; it is initially hidden because of .d-none -->
+            <div id="alertSuccess" class="alert alert-success mt-3 d-none" role="alert">
+                No errors found in the email address.
+            </div>              
+
+        </div><!-- container-sm -->
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+                integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+                crossorigin="anonymous"></script>
+        <script src="./email-checker.js"></script>
+
+    </body>
+</html>
