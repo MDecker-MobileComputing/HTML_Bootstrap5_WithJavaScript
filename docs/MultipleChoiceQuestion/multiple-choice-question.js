@@ -1,10 +1,10 @@
 "use strict";
 
-let buttonAntwortPruefen = null;
+let buttonCheckAnswer = null;
 
-let modalErgebnis          = null;
-let modalErgebnisTitel     = null;
-let modalErgebnisNachricht = null;
+let modalResult        = null;
+let modalResultTitle   = null;
+let modalResultMessage = null;
 
 
 /**
@@ -13,10 +13,10 @@ let modalErgebnisNachricht = null;
  */
 window.addEventListener( "load", function () {
 
-    buttonAntwortPruefen = document.getElementById( "buttonAntwortPruefen" );
-    if ( buttonAntwortPruefen ) { // != null && != undefined
+    buttonCheckAnswer = document.getElementById( "buttonAnswerCheck" );
+    if ( buttonCheckAnswer ) { // != null && != undefined
 
-        buttonAntwortPruefen.addEventListener( "click", onButtonAntwortPruefen );
+        buttonCheckAnswer.addEventListener( "click", onCheckAnswerButtonClick );
 
     } else {
 
@@ -25,20 +25,20 @@ window.addEventListener( "load", function () {
 
 
     // Bootstrap provides its own class to retrieve a modal by ID
-    modalErgebnis = new bootstrap.Modal( "#modalErgebnis", {} );
-    if ( !modalErgebnis ) {
+    modalResult = new bootstrap.Modal( "#modalResult", {} );
+    if ( !modalResult ) {
 
         console.error( "Could not find the result modal element!" );
     }
 
-    modalErgebnisTitel = document.getElementById( "modalErgebnisTitel" );
-    if ( !modalErgebnisTitel ) {
+    modalResultTitle = document.getElementById( "modalResultTitle" );
+    if ( !modalResultTitle ) {
 
         console.error( "Could not find the title element for the result modal!" );
     }
 
-    modalErgebnisNachricht = document.getElementById( "modalErgebnisNachricht" );
-    if ( !modalErgebnisNachricht ) {
+    modalResultMessage = document.getElementById( "modalResultMessage" );
+    if ( !modalResultMessage ) {
 
         console.error( "Could not find the message element for the result modal!" );
     }
@@ -56,43 +56,45 @@ window.addEventListener( "load", function () {
 /**
  * Event handler for clicking the "Check answer" button.
  */
-function onButtonAntwortPruefen() {
+function onCheckAnswerButtonClick() {
 
-    const antwortArray = [];
+    const checkboxArray =  document.querySelectorAll( ".form-check-input" );            
 
-    const alleCheckboxen = document.querySelectorAll( ".form-check-input" );
-    alleCheckboxen.forEach( function( checkbox ) {
+    const answerArray = [];
+
+    checkboxArray.forEach( function( checkbox ) {
 
         if ( checkbox.checked ) {
 
-            antwortArray.push( checkbox.id );
+            answerArray.push( checkbox.id );
         }
     });
-    console.log( "Ausgewählte Checkboxen:", antwortArray );
 
-    if ( antwortArray.length === 0 ) {
+    console.log( "Selected checkboxes:", answerArray );
 
-        modalErgebnisTitel.innerText     = "Error";
-        modalErgebnisNachricht.innerText = "Please select at least one answer.";
+    if ( answerArray.length === 0 ) {
 
-    } else if ( antwortArray.length === 2                  &&
-                antwortArray.includes( "checkboxMercury" ) &&
-                antwortArray.includes( "checkboxVenus"   ) ) {
+        modalResultTitle.innerText   = "Error";
+        modalResultMessage.innerText = "Please select at least one answer.";
 
-        modalErgebnisTitel.innerText     = "Correct answer";
-        modalErgebnisNachricht.innerText = "Congratulations!";
+    } else if ( answerArray.length === 2                  &&
+                answerArray.includes( "checkboxMercury" ) &&
+                answerArray.includes( "checkboxVenus"   ) ) {
+
+        modalResultTitle.innerText   = "Correct answer";
+        modalResultMessage.innerText = "Congratulations!";
 
     } else {
 
-        modalErgebnisTitel.innerText     = "Wrong answer";
-        modalErgebnisNachricht.innerText = "Think again!";
+        modalResultTitle.innerText   = "Wrong answer";
+        modalResultMessage.innerText = "Think again!";
 
         // clear all checkboxes
-        alleCheckboxen.forEach( function( checkbox ) {
+        checkboxArray.forEach( function( checkbox ) {
 
             checkbox.checked = false;
         });
     }
 
-    modalErgebnis.show();
+    modalResult.show();
 }
