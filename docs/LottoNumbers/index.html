@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" >
+        <title>Bootstrap 5: Lotto Number Generator</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+              integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+              crossorigin="anonymous"
+              rel="stylesheet">
+    </head>
+    <body>
+
+        <div class="container-sm">
+
+            <h1 class="text-center my-5">Lotto Number Generator (Bootstrap 5)</h1><!-- my-5: margin top+bottom -->
+
+            <div class="row mb-3">
+                <div class="col-3">
+                    <label for="inputCount" class="form-label">Number of lotto tips:</label>
+                    <input id="inputCount"
+                           type="number"
+                           class="form-control"
+                           placeholder="Enter a number"
+                           value="3"
+                           min="1" max="100">
+                </div>
+            </div><!-- row -->
+            <button id="buttonDraw" class="btn btn-primary">Go!</button>
+
+
+            <!-- The generated lotto numbers are inserted into the <input> elements under this <div> element -->
+            <div class="row mt-5 mb-3">
+                <div id="resultContainer" class="col-md-3 col-sm-6">
+                </div>
+            </div>
+            <button id="buttonClear" class="btn btn-danger mb-3 d-none">Clear</button>
+
+        </div><!-- container-sm -->
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+                integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+                crossorigin="anonymous"></script>
+        <script src="./lottozahlen.js"></script>
+
+    </body>
+</html>
