@@ -54,7 +54,7 @@ window.addEventListener( "load", function () {
 /**
  * Event handler function invoked when another radio button is selected.
  */
-function onRadioButtonChange(event) {
+function onRadioButtonChange( event ) {
 
     const selectedRadioButtonValue = event.target.value;
 
