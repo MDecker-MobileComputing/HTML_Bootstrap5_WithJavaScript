@@ -82,7 +82,8 @@ function onRadioButtonChange( event ) {
 
         default:
             console.error(
-                `Internal error: Unexpected radio button value: "${selectedRadioButtonValue}"`
+                "Internal error: Unexpected radio button value: ",
+                selectedRadioButtonValue
             );
     }
 }
