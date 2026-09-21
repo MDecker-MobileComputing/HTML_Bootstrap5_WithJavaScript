@@ -15,7 +15,7 @@ class NumberPair {
      */
     constructor( number ) {
 
-        this._number        = number;
+        this._number       = number;
         this._randomNumber = Math.random();
     }
 
