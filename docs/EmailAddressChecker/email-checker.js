@@ -84,7 +84,7 @@ function onCheckButton() {
 
 /**
  * Check the local part (part 1) of the email address.
- * 
+ *
  * @returns {boolean} true if the local part is valid, otherwise false.
  */
 function checkLocalPart() {
@@ -101,13 +101,13 @@ function checkLocalPart() {
 
         inputLocalPart.classList.add( "is-invalid" );
         return false;
-    }        
+    }
 }
 
 
 /**
  * Check the domain part (part 2) of the email address.
- * 
+ *
  * @return {boolean} true if the domain part is valid, otherwise false.
  */
 function checkDomainPart() {
@@ -130,7 +130,7 @@ function checkDomainPart() {
 
 /**
  * Check the top-level domain (part 3).
- * 
+ *
  * @return {boolean} true if the top-level domain is valid, otherwise false.
  */
 function checkTopLevelDomain() {
@@ -157,10 +157,10 @@ function checkTopLevelDomain() {
  */
 function onResetButton() {
 
-    inputLocalPart.value    = "";
-    inputDomain.value       = "";
-    inputTopLevelDomain.value = "";    
-    
+    inputLocalPart.value      = "";
+    inputDomain.value         = "";
+    inputTopLevelDomain.value = "";
+
     resetValidInvalid();
 }
 
