@@ -35,7 +35,7 @@ window.addEventListener( "load", function () {
 
 
     // Bootstrap provides its own class that can fetch a modal by its ID.
-    resultModal = new bootstrap.Modal('#resultModal', {} );
+    resultModal = new bootstrap.Modal( "#resultModal", {} );
     if ( !resultModal ) {
 
         console.error( "Could not find the result modal element!" );
