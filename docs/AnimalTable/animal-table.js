@@ -66,13 +66,13 @@ function onRadioButtonChange( event ) {
 
         case "herbivores":
             herbivoreRows.forEach( row => {
-                row.classList.add( "table-primary" );
+                row.classList.add( "table-primary" ); // color dark blue
             });
         break;
 
         case "pets":
             petRows.forEach( row => {
-                row.classList.add( "table-info" );
+                row.classList.add( "table-info" ); // color light blue
             });
         break;
 
