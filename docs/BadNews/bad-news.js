@@ -131,8 +131,8 @@ function displayNews( newsItems, domesticOnly ) {
 
     for ( let i = 0; i < newsItems.length; i++ ) {
 
-        const headlineText = newsItems[i].schlagzeile;
-        const isDomestic   = newsItems[i].inland;
+        const headlineText = newsItems[i].headline;
+        const isDomestic   = newsItems[i].domestic;;
 
         const listItem = document.createElement( "li" );
         listItem.classList.add( "list-group-item",
