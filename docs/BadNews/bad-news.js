@@ -19,7 +19,7 @@ window.addEventListener( "load", function () {
 
     } else {
 
-        console.error( "Button 'Load news' not found!" );
+        console.error( "Button \"Load news\" not found!" );
     }
 
     let resetButton = document.getElementById( "buttonReset" );
@@ -41,7 +41,7 @@ window.addEventListener( "load", function () {
     checkboxDomesticOnly = document.getElementById( "checkboxDomesticOnly" );
     if ( !checkboxDomesticOnly ) {
 
-        console.error( "Checkbox for 'Domestic only' not found!" );
+        console.error( "Checkbox for \"Domestic only\" not found!" );
     }
 
     rangeCount = document.getElementById( "rangeCount" );
@@ -51,7 +51,7 @@ window.addEventListener( "load", function () {
 
     } else {
 
-        console.error( "Range element 'Amount' not found!" );
+        console.error( "Range element \"Amount\" not found!" );
     }
 
     countDisplay = document.getElementById( "countDisplay" );
@@ -98,9 +98,11 @@ async function onLoadNewsButton() {
 
     newsList.innerHTML = "";
 
-    const count = rangeCount.value;
+    const count        = rangeCount.value;
     const domesticOnly = checkboxDomesticOnly.checked;
-    const url = `https://api.el-decker.de/badnews.php?anzahl=${count}&nur_inland=${domesticOnly}`;
+
+    const url =
+        `https://api.el-decker.de/badnews_english.php?count=${count}&domestic_only=${domesticOnly}`;
 
     console.log( "Loading news from the web API ..." );
 
