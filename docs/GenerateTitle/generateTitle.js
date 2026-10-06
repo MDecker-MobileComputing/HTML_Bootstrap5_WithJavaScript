@@ -14,6 +14,16 @@ let buttonDelete                  = null;
  */
 window.addEventListener( "load", function () {
 
+    const rangeSuggestionCount = document.getElementById( "rangeSuggestionCount" );
+    const rangeTemperature     = document.getElementById( "rangeTemperature" );
+
+    rangeSuggestionCount.addEventListener( "input", function () {
+        document.getElementById( "suggestionCountValue" ).textContent = rangeSuggestionCount.value;
+    });
+
+    rangeTemperature.addEventListener( "input", function () {
+        document.getElementById( "temperatureValue" ).textContent = Number( rangeTemperature.value ).toFixed( 1 );
+    });
 
     inputTitle = document.getElementById( "inputTitle" );
     textArea   = document.getElementById( "editor"     );
