@@ -109,7 +109,9 @@ async function onLoadNewsButton() {
     try {
 
         const response = await fetch( url );
-        if (!response.ok) {
+
+
+        if ( !response.ok ) {
 
             throw new Error( "Error loading news: " + response.status );
         }
@@ -117,7 +119,7 @@ async function onLoadNewsButton() {
         const responseJSON = await response.json();
         displayNews( responseJSON.items, domesticOnly );
     }
-    catch (error) {
+    catch ( error ) {
 
         console.error( "Error loading news: " + error );
     }
@@ -132,7 +134,7 @@ function displayNews( newsItems, domesticOnly ) {
     for ( let i = 0; i < newsItems.length; i++ ) {
 
         const headlineText = newsItems[i].headline;
-        const isDomestic   = newsItems[i].domestic;;
+        const isDomestic   = newsItems[i].domestic;
 
         const listItem = document.createElement( "li" );
         listItem.classList.add( "list-group-item",
