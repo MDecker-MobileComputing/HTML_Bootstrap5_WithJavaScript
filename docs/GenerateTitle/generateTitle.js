@@ -11,7 +11,8 @@ let buttonGenerateTitleSuggestion = null;
 let buttonDelete                  = null;
 let buttonCheckApiKey             = null;
 
-let alertMessageSettings = null;
+let alertPanel = null;
+
 
 /**
  * This function is called when the document including all
@@ -39,7 +40,7 @@ window.addEventListener( "load", function () {
     buttonDelete                  = document.getElementById( "buttonDelete"                  );
     buttonCheckApiKey             = document.getElementById( "buttonCheckApiKey"             );
 
-    alertMessageSettings = document.getElementById( "alertMessageSettings" );
+    alertPanel = document.getElementById( "alertPanel" );
 
     buttonGenerateTitleSuggestion.addEventListener( "click", onButtonGenerateTitleSuggestion );
     buttonDelete.addEventListener( "click", onButtonDelete );
@@ -54,11 +55,13 @@ window.addEventListener( "load", function () {
  */
 function onButtonGenerateTitleSuggestion() {
 
+    hideAlert();
+
     const inputText = textArea.value.trim();
 
     if ( inputText.length === 0 ) {
 
-        alert( "Please enter some text before generating a title suggestion." );
+        showAlert( "Please enter some text before generating a title suggestion.", "warning" );
         return;
     }
 
@@ -69,6 +72,8 @@ function onButtonGenerateTitleSuggestion() {
  * Event handler function for the "Delete Title and Text" button.
  */
 function onButtonDelete() {
+
+    hideAlert();
 
     inputTitle.value = "";
     textArea.value   = "";
@@ -81,24 +86,23 @@ function onButtonDelete() {
  */
 function onButtonCheckApiKey() {
 
-    hideAlertSettings();
+    hideAlert();
 
     const apiKey = inputApiKey.value.trim();
 
     if ( apiKey.length === 0 ) {
 
-        showAlertSettings( "Please enter your API key before checking it.", "danger" );
+        showAlert( "Please enter your API key before checking it.", "danger" );
         return;
     }
 
     if ( !API_KEY_REGEXP_PATTERN.test( apiKey ) ) {
 
-        showAlertSettings( "The API key format is invalid. Please check your input.", "danger" );
+        showAlert( "The API key format is invalid. Please check your input.", "danger" );
         return;
     }
 
-
-    showAlertSettings( "The API key format appears to be valid.", "success" );
+    showAlert( "The API key format appears to be valid." );
 }
 
 
@@ -106,23 +110,23 @@ function onButtonCheckApiKey() {
  * Displays an alert message in the settings section with the specified message and type.
  *
  * @param {string} message Text to be displayed
- * @param {string} type    Type of alert: "success" or "danger" or "warning"
+ * @param {string} type    Type of alert: "success" (default value) or "danger" or "warning"
  */
-function showAlertSettings( message, type ) {
+function showAlert( message, type="success" ) {
 
-    alertMessageSettings.textContent = message;
+    alertPanel.textContent = message;
 
-    alertMessageSettings.classList.add( "alert-" + type );
-    alertMessageSettings.classList.remove( "d-none" );
+    alertPanel.classList.add( "alert-" + type );
+    alertPanel.classList.remove( "d-none" );
 }
 
 
 /**
  * Hides the alert message in the settings section.
  */
-function hideAlertSettings() {
+function hideAlert() {
 
-    alertMessageSettings.textContent = "";
-    alertMessageSettings.classList.remove( "alert-success", "alert-danger" );
-    alertMessageSettings.classList.add( "d-none" );
+    alertPanel.textContent = "";
+    alertPanel.classList.remove( "alert-success", "alert-danger" );
+    alertPanel.classList.add( "d-none" );
 }
