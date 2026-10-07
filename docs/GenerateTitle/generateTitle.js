@@ -6,6 +6,7 @@ const API_KEY_REGEXP_PATTERN = /^[A-Za-z0-9_\.-]{30,128}$/;
 const COOKIE_NAME_API_KEY          = "generateTitle_apiKey";
 const COOKIE_NAME_SUGGESTION_COUNT = "generateTitle_suggestionCount";
 const COOKIE_NAME_TEMPERATURE      = "generateTitle_temperature";
+const COOKIE_NAME_MODEL            = "generateTitle_model";
 
 let inputTitle  = null;
 let textArea    = null;
@@ -26,23 +27,24 @@ window.addEventListener( "load", function() {
 
     const rangeSuggestionCount = document.getElementById( "rangeSuggestionCount" );
     const rangeTemperature     = document.getElementById( "rangeTemperature"     );
+    const selectGeminiModel    = document.getElementById( "selectGeminiModel"    );
 
-    rangeSuggestionCount.addEventListener( "input", onRangeSuggestionCountInput );
-    rangeTemperature.addEventListener( "input", onRangeTemperatureInput );
+    rangeSuggestionCount.addEventListener( "input" , onRangeSuggestionCountInput );
+    rangeTemperature.addEventListener(     "input" , onRangeTemperatureInput     );
+    selectGeminiModel.addEventListener(    "change", onGeminiModelChange         );
 
     inputTitle  = document.getElementById( "inputTitle"  );
     inputApiKey = document.getElementById( "inputApiKey" );
     textArea    = document.getElementById( "editor"      );
+    alertPanel  = document.getElementById( "alertPanel"  );
 
     buttonGenerateTitleSuggestion = document.getElementById( "buttonGenerateTitleSuggestion" );
     buttonDelete                  = document.getElementById( "buttonDelete"                  );
     buttonCheckApiKey             = document.getElementById( "buttonCheckApiKey"             );
 
-    alertPanel = document.getElementById( "alertPanel" );
-
     buttonGenerateTitleSuggestion.addEventListener( "click", onButtonGenerateTitleSuggestion );
-    buttonDelete.addEventListener( "click", onButtonDelete );
-    buttonCheckApiKey.addEventListener( "click", onButtonCheckApiKey );
+    buttonDelete.addEventListener                 ( "click", onButtonDelete                  );
+    buttonCheckApiKey.addEventListener            ( "click", onButtonCheckApiKey             );
 
     restoreSettingsFromCookies();
 
@@ -72,6 +74,15 @@ function onRangeTemperatureInput( event ) {
     document.getElementById( "temperatureValue" ).textContent = temperatureValue;
 
     setCookie( COOKIE_NAME_TEMPERATURE, temperatureValue );
+}
+
+
+/**
+ * Stores the selected Gemini model when the selector for the AI model changes.
+ */
+function onGeminiModelChange( event ) {
+
+    setCookie( COOKIE_NAME_MODEL, event.currentTarget.value );
 }
 
 
@@ -174,8 +185,9 @@ function setCookie( cookieName, cookieValue ) {
     const cookieValueEncoded = encodeURIComponent( cookieValue );
 
     document.cookie = cookieKeyEncoded + "=" + cookieValueEncoded +
-                      "; max-age=31536000; path=/; SameSite=Lax";
+                      "; max-age=31536000; path=/; SameSite=Strict";
     // 31536000 seconds = 1 year
+    // Other values for SameSite: "Lax" or "None" (if using HTTPS)
 }
 
 
@@ -228,5 +240,22 @@ function restoreSettingsFromCookies() {
         rangeSuggestionCount.value = suggestionCountCookieValue;
         document.getElementById( "suggestionCountValue" ).textContent = suggestionCountCookieValue;
         console.log( "Restored suggestion count from cookie." );
+    }
+
+    const temperatureCookieValue = getCookie( COOKIE_NAME_TEMPERATURE );
+    if ( temperatureCookieValue !== null ) {
+
+        const rangeTemperature = document.getElementById( "rangeTemperature" );
+        rangeTemperature.value = temperatureCookieValue;
+        document.getElementById( "temperatureValue" ).textContent = temperatureCookieValue;
+        console.log( "Restored temperature from cookie." );
+    }
+
+    const modelCookieValue = getCookie( COOKIE_NAME_MODEL );
+    if ( modelCookieValue !== null ) {
+
+        const selectGeminiModel = document.getElementById( "selectGeminiModel" );
+        selectGeminiModel.value = modelCookieValue;
+        console.log( "Restored model from cookie." );
     }
 }
