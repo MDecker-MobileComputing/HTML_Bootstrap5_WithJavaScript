@@ -8,6 +8,19 @@ const COOKIE_NAME_SUGGESTION_COUNT = "generateTitle_suggestionCount";
 const COOKIE_NAME_TEMPERATURE      = "generateTitle_temperature";
 const COOKIE_NAME_MODEL            = "generateTitle_model";
 
+/** Base URL for the Gemini when OpenAI API format is used. */
+const GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions";
+
+const GEMINI_PROMPT_TEMPLATE=
+          `Generate exactly %NUMBER_TITLE_SUGGESTIONS% title suggestions for the following text.
+           The titles should be factual and matter-of-fact, without sensational or promotional language.
+           Write all titles in the same language as the input text.
+           Return the result as a valid JSON array of strings, with one title per array element.
+           Example: ["Title 1", "Title 2", "Title 3"]
+           Output only the JSON array. Do not include Markdown, comments, or explanatory text.
+           Ensure the JSON is valid and contains exactly %NUMBER_TITLE_SUGGESTIONS% titles.
+           Text: %TEXT_TO_SUMMARIZE%`;
+
 let inputTitle  = null;
 let textArea    = null;
 let inputApiKey = null;
@@ -89,7 +102,7 @@ function onGeminiModelChange( event ) {
 /**
  * Event handler function for the "Generate Title Suggestion" button.
  */
-function onButtonGenerateTitleSuggestion() {
+async function onButtonGenerateTitleSuggestion() {
 
     resetAlert();
 
@@ -100,6 +113,24 @@ function onButtonGenerateTitleSuggestion() {
         showAlert( "Please enter some text before generating a title suggestion.",
                    "warning" );
         return;
+    }
+
+    try {
+
+        const titleSuggestionsArray = await generateTitleSuggestions( inputText );
+        if ( titleSuggestionsArray && titleSuggestionsArray.length > 0 ) {
+
+            inputTitle.value = titleSuggestionsArray[ 0 ];
+
+        } else {
+
+            showAlert( "No title suggestions were generated. Please try again.", "warning" );
+        }
+
+    } catch ( error ) {
+
+        console.error( "Error generating title suggestions:", error );
+        showAlert( "An error occurred while generating title suggestions.", "danger" );
     }
 
 }
@@ -257,5 +288,75 @@ function restoreSettingsFromCookies() {
         const selectGeminiModel = document.getElementById( "selectGeminiModel" );
         selectGeminiModel.value = modelCookieValue;
         console.log( "Restored model from cookie." );
+    }
+}
+
+/**
+ * Generates title suggestions for the given input text.
+ *
+ * @param {String} inputText Text for which some title suggestions are to be generated
+ *
+ * @return {Promise<string[]>} A promise that resolves to the generated title suggestions
+ */
+async function generateTitleSuggestions( inputText ) {
+
+    // read api key from cookie
+    const apiKey = getCookie( COOKIE_NAME_API_KEY );
+    if ( ! apiKey ) {
+
+        showAlert( "API key is missing. Please enter your API key in the settings.", "danger" );
+        return [];
+    }
+
+    let suggestionCount = document.getElementById( "rangeSuggestionCount" ).value;
+    if ( ! suggestionCount ) { suggestionCount = 5; } // Default to 5 suggestions if not set
+
+    const prompt =
+            GEMINI_PROMPT_TEMPLATE.replace( "%NUMBER_TITLE_SUGGESTIONS%", suggestionCount )
+                                  .replace( "%TEXT_TO_SUMMARIZE%"       , inputText       );
+
+    // Use the generated prompt to call the Gemini API and get title suggestions.
+
+    const requestObject = {
+                             "model": selectGeminiModel.value,
+                             "messages": [
+                                 {
+                                     "role": "user",
+                                     "content": prompt
+                                 }
+                             ]
+                          };
+
+    const requestObjectString = JSON.stringify( requestObject );
+
+    try {
+
+        const response = await fetch( GEMINI_BASE_URL, {
+            method: "POST",
+            headers: {
+                "Content-Type" : "application/json",
+                "Authorization": `Bearer ${apiKey}`
+            },
+            body: requestObjectString
+        } );
+
+        if ( !response.ok ) {
+
+            throw new Error( `HTTP error! status: ${response.status}` );
+        }
+
+        const data = await response.json();
+
+        // Extract the content from the response
+        const content = data.choices[0].message.content;
+
+        // Parse the content as JSON to get the array of title suggestions
+        const titleSuggestionsArray = JSON.parse( content );
+        return titleSuggestionsArray;
+    }
+    catch ( error ) {
+
+        console.error( "Error generating title suggestions:", error );
+        showAlert( "An error occurred while generating title suggestions. Please try again.", "danger" );
     }
 }
