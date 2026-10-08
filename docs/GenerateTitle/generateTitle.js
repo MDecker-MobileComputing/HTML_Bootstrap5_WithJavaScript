@@ -37,6 +37,8 @@ let buttonCheckApiKey  = null;
 let alertPanel               = null;
 let spanSuggestionCountValue = null;
 let spanTemperatureValue     = null;
+let badgeSuggestionCount     = null;
+
 
 /** Array to hold the generated title suggestions (cache for prefetched title suggestions). */
 const titleSuggestionsArray = [];
@@ -68,6 +70,9 @@ window.addEventListener( "load", function() {
     buttonDelete       = document.getElementById( "buttonDelete"       );
     buttonCheckApiKey  = document.getElementById( "buttonCheckApiKey"  );
 
+    badgeSuggestionCount = document.getElementById( "badgeSuggestionCount" );
+    badgeSuggestionCount.textContent = "0";
+
     buttonSuggestTitle.addEventListener( "click", onButtonSuggestTitle );
     buttonDelete.addEventListener      ( "click", onButtonDelete       );
     buttonCheckApiKey.addEventListener ( "click", onButtonCheckApiKey  );
@@ -96,7 +101,9 @@ function onRangeSuggestionCountInput( event ) {
  */
 function onRangeTemperatureInput( event ) {
 
-    const temperatureValue = Number( event.currentTarget.value ).toFixed( 1 ); // Round to one decimal place
+    const newValue = event.currentTarget.value;
+
+    const temperatureValue = Number( newValue ).toFixed( 1 ); // Round to one decimal place
 
     spanTemperatureValue.textContent = temperatureValue;
 
@@ -123,6 +130,7 @@ function onGeminiModelChange( event ) {
 function titleQueueEnqueue( titleSuggestionArrays ) {
 
     titleSuggestionsArray.push( ...titleSuggestionArrays );
+    updateBadgeSuggestionCount();
 }
 
 
@@ -135,7 +143,9 @@ function titleQueueDequeue() {
 
     if ( titleSuggestionsArray.length > 0 ) {
 
-        return titleSuggestionsArray.shift();
+        const titleSuggestion = titleSuggestionsArray.shift();
+        updateBadgeSuggestionCount();
+        return titleSuggestion;
 
     } else {
 
@@ -150,6 +160,17 @@ function titleQueueDequeue() {
 function titleQueueClear() {
 
     titleSuggestionsArray.length = 0;
+    updateBadgeSuggestionCount();
+}
+
+
+/**
+ * Updates the badge that displays the count of title suggestions in the queue.
+ */
+function updateBadgeSuggestionCount() {
+
+    const count = titleSuggestionsArray.length;
+    badgeSuggestionCount.textContent = count.toString();
 }
 
 
