@@ -27,10 +27,12 @@ let textArea    = null;
 let inputApiKey = null;
 
 let buttonSuggestTitle = null;
-let buttonDelete                  = null;
-let buttonCheckApiKey             = null;
+let buttonDelete       = null;
+let buttonCheckApiKey  = null;
 
-let alertPanel = null;
+let alertPanel               = null;
+let spanSuggestionCountValue = null;
+let spanTemperatureValue     = null;
 
 
 /**
@@ -52,13 +54,16 @@ window.addEventListener( "load", function() {
     textArea    = document.getElementById( "editor"      );
     alertPanel  = document.getElementById( "alertPanel"  );
 
+    spanSuggestionCountValue = document.getElementById( "suggestionCountValue" );
+    spanTemperatureValue     = document.getElementById( "temperatureValue"     );
+
     buttonSuggestTitle = document.getElementById( "buttonSuggestTitle" );
-    buttonDelete                  = document.getElementById( "buttonDelete"                  );
-    buttonCheckApiKey             = document.getElementById( "buttonCheckApiKey"             );
+    buttonDelete       = document.getElementById( "buttonDelete"       );
+    buttonCheckApiKey  = document.getElementById( "buttonCheckApiKey"  );
 
     buttonSuggestTitle.addEventListener( "click", onButtonGenerateTitleSuggestion );
-    buttonDelete.addEventListener                 ( "click", onButtonDelete                  );
-    buttonCheckApiKey.addEventListener            ( "click", onButtonCheckApiKey             );
+    buttonDelete.addEventListener      ( "click", onButtonDelete                  );
+    buttonCheckApiKey.addEventListener ( "click", onButtonCheckApiKey             );
 
     restoreSettingsFromCookies();
 
@@ -72,7 +77,7 @@ window.addEventListener( "load", function() {
  */
 function onRangeSuggestionCountInput( event ) {
 
-    document.getElementById( "suggestionCountValue" ).textContent = event.currentTarget.value;
+    spanSuggestionCountValue.textContent = event.currentTarget.value;
 
     setCookie( COOKIE_NAME_SUGGESTION_COUNT, event.currentTarget.value );
 }
@@ -85,7 +90,7 @@ function onRangeTemperatureInput( event ) {
 
     const temperatureValue = Number( event.currentTarget.value ).toFixed( 1 ); // Round to one decimal place
 
-    document.getElementById( "temperatureValue" ).textContent = temperatureValue;
+    spanTemperatureValue.textContent = temperatureValue;
 
     setCookie( COOKIE_NAME_TEMPERATURE, temperatureValue );
 }
@@ -144,7 +149,6 @@ async function onButtonGenerateTitleSuggestion() {
         buttonDelete.disabled       = false;
         textArea.disabled           = false;
     }
-
 }
 
 
@@ -281,7 +285,7 @@ function restoreSettingsFromCookies() {
 
         const rangeSuggestionCount = document.getElementById( "rangeSuggestionCount" );
         rangeSuggestionCount.value = suggestionCountCookieValue;
-        document.getElementById( "suggestionCountValue" ).textContent = suggestionCountCookieValue;
+        spanSuggestionCountValue.textContent = suggestionCountCookieValue;
         console.log( "Restored suggestion count from cookie." );
     }
 
@@ -290,7 +294,7 @@ function restoreSettingsFromCookies() {
 
         const rangeTemperature = document.getElementById( "rangeTemperature" );
         rangeTemperature.value = temperatureCookieValue;
-        document.getElementById( "temperatureValue" ).textContent = temperatureCookieValue;
+        spanTemperatureValue.textContent = temperatureCookieValue;
         console.log( "Restored temperature from cookie." );
     }
 
