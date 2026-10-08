@@ -11,6 +11,7 @@ const COOKIE_NAME_MODEL            = "generateTitle_model";
 /** Base URL for the Gemini when OpenAI API format is used. */
 const GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions";
 
+/** Prompt with placeholders for the number of title suggestions and the text to summarize. */
 const GEMINI_PROMPT_TEMPLATE=
           `Generate exactly %NUMBER_TITLE_SUGGESTIONS% title suggestions for the following text.
            The titles should be factual and matter-of-fact, without sensational or promotional language.
@@ -25,7 +26,7 @@ let inputTitle  = null;
 let textArea    = null;
 let inputApiKey = null;
 
-let buttonGenerateTitleSuggestion = null;
+let buttonSuggestTitle = null;
 let buttonDelete                  = null;
 let buttonCheckApiKey             = null;
 
@@ -51,11 +52,11 @@ window.addEventListener( "load", function() {
     textArea    = document.getElementById( "editor"      );
     alertPanel  = document.getElementById( "alertPanel"  );
 
-    buttonGenerateTitleSuggestion = document.getElementById( "buttonGenerateTitleSuggestion" );
+    buttonSuggestTitle = document.getElementById( "buttonSuggestTitle" );
     buttonDelete                  = document.getElementById( "buttonDelete"                  );
     buttonCheckApiKey             = document.getElementById( "buttonCheckApiKey"             );
 
-    buttonGenerateTitleSuggestion.addEventListener( "click", onButtonGenerateTitleSuggestion );
+    buttonSuggestTitle.addEventListener( "click", onButtonGenerateTitleSuggestion );
     buttonDelete.addEventListener                 ( "click", onButtonDelete                  );
     buttonCheckApiKey.addEventListener            ( "click", onButtonCheckApiKey             );
 
@@ -115,12 +116,14 @@ async function onButtonGenerateTitleSuggestion() {
         return;
     }
 
-    buttonGenerateTitleSuggestion.disabled = true;
-    buttonDelete.disabled                  = true;
+    buttonSuggestTitle.disabled = true;
+    buttonDelete.disabled       = true;
+    textArea.disabled           = true;
+
 
     try {
 
-        const titleSuggestionsArray = await generateTitleSuggestions( inputText );
+        const titleSuggestionsArray = await fetchTitleSuggestionsFromGemini( inputText );
         if ( titleSuggestionsArray && titleSuggestionsArray.length > 0 ) {
 
             inputTitle.value = titleSuggestionsArray[ 0 ];
@@ -137,8 +140,9 @@ async function onButtonGenerateTitleSuggestion() {
 
     } finally {
 
-        buttonGenerateTitleSuggestion.disabled = false;
-        buttonDelete.disabled                  = false;
+        buttonSuggestTitle.disabled = false;
+        buttonDelete.disabled       = false;
+        textArea.disabled           = false;
     }
 
 }
@@ -300,13 +304,13 @@ function restoreSettingsFromCookies() {
 }
 
 /**
- * Generates title suggestions for the given input text.
+ * Fetch title suggestions for the given input text.
  *
  * @param {String} inputText Text for which some title suggestions are to be generated
  *
  * @return {Promise<string[]>} A promise that resolves to the generated title suggestions
  */
-async function generateTitleSuggestions( inputText ) {
+async function fetchTitleSuggestionsFromGemini( inputText ) {
 
     // read api key from cookie
     const apiKey = getCookie( COOKIE_NAME_API_KEY );
@@ -326,10 +330,10 @@ async function generateTitleSuggestions( inputText ) {
     // Use the generated prompt to call the Gemini API and get title suggestions.
 
     const requestObject = {
-                             "model": selectGeminiModel.value,
+                             "model"  : selectGeminiModel.value,
                              "messages": [
                                  {
-                                     "role": "user",
+                                     "role"   : "user",
                                      "content": prompt
                                  }
                              ]
