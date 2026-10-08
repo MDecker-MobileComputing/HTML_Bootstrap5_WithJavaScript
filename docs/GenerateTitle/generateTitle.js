@@ -11,6 +11,12 @@ const COOKIE_NAME_MODEL            = "generateTitle_model";
 /** Base URL for the Gemini when OpenAI API format is used. */
 const GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions";
 
+/** 
+ * Base URL for listing the models available to a Gemini API key (available models are queried to 
+ * check if the API key is valid). 
+ */
+const GEMINI_MODELS_URL = "https://generativelanguage.googleapis.com/v1beta/models";
+
 /** Prompt with placeholders for the number of title suggestions and the text to summarize. */
 const GEMINI_PROMPT_TEMPLATE=
           `Generate exactly %NUMBER_TITLE_SUGGESTIONS% title suggestions for the following text.
@@ -78,6 +84,14 @@ window.addEventListener( "load", function() {
     buttonCheckApiKey.addEventListener ( "click", onButtonCheckApiKey  );
 
     restoreSettingsFromCookies();
+
+    const tooltipTriggerList = [].slice.call(
+        document.querySelectorAll( "[data-bs-toggle=\"tooltip\"]" )
+    );
+    tooltipTriggerList.map( function ( tooltipTriggerEl ) {
+
+        return new bootstrap.Tooltip( tooltipTriggerEl );
+    });
 
     console.log( "Initialization complete." );
 } );
@@ -255,7 +269,7 @@ function onButtonDelete() {
 /**
  * Event handler function for the "Check API Key" button.
  */
-function onButtonCheckApiKey() {
+async function onButtonCheckApiKey() {
 
     resetAlert();
 
@@ -273,9 +287,25 @@ function onButtonCheckApiKey() {
         return;
     }
 
-    setCookie( COOKIE_NAME_API_KEY, apiKey );
+    buttonCheckApiKey.disabled = true;
 
-    showAlert( "API key was saved." );
+    try {
+
+        await fetchAvailableModelsFromGemini( apiKey );
+
+        setCookie( COOKIE_NAME_API_KEY, apiKey );
+        showAlert( "API key was checked and saved." );
+
+    } catch ( error ) {
+
+        console.error( "Error checking the Gemini API key:", error );
+        showAlert( "The API key could not be verified. Please check the key and try again.",
+                   "danger" );
+
+    } finally {
+
+        buttonCheckApiKey.disabled = false;
+    }
 }
 
 
@@ -390,6 +420,39 @@ function restoreSettingsFromCookies() {
         selectGeminiModel.value = modelCookieValue;
         console.log( "Restored model from cookie." );
     }
+}
+
+
+/**
+ * Reads the models available to a Gemini API key.
+ *
+ * @param {string} apiKey Gemini API key to validate
+ *
+ * @return {Promise<Object[]>} A promise that resolves to the available models
+ * 
+ * @throws {Error} Throws an error if the API key is invalid or if the response 
+ *                 is not as expected
+ */
+async function fetchAvailableModelsFromGemini( apiKey ) {
+
+    const response = await fetch(
+        GEMINI_MODELS_URL + "?key=" + encodeURIComponent( apiKey ) + "&pageSize=3"
+    );
+    // at most 3 models are returned, as we only need to check if the API key is valid
+
+    if ( !response.ok ) {
+
+        throw new Error( `HTTP error! status: ${response.status}` );
+    }
+
+    const data = await response.json();
+
+    if ( !data || !Array.isArray( data.models ) ) {
+
+        throw new Error( "Gemini returned an invalid models response." );
+    }
+
+    return data.models;
 }
 
 
