@@ -190,6 +190,13 @@ async function onButtonSuggestTitle() {
         return;
     }
 
+    const apiKey = getCookie( COOKIE_NAME_API_KEY );
+    if ( ! apiKey ) {
+
+        showAlert( "API key is missing. Please enter your API key in the settings.", "danger" );
+        return;
+    }
+
     const titleFromQueue = titleQueueDequeue();
     if ( titleFromQueue ) {
 
@@ -395,7 +402,6 @@ function restoreSettingsFromCookies() {
  */
 async function fetchTitleSuggestionsFromGemini( inputText ) {
 
-    // read api key from cookie
     const apiKey = getCookie( COOKIE_NAME_API_KEY );
     if ( ! apiKey ) {
 
