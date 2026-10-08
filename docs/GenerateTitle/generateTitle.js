@@ -38,6 +38,9 @@ let alertPanel               = null;
 let spanSuggestionCountValue = null;
 let spanTemperatureValue     = null;
 
+/** Array to hold the generated title suggestions (cache for prefetched title suggestions). */
+const titleSuggestionsArray = [];
+
 
 /**
  * Initializes the page after the DOM content has fully loaded:
@@ -65,15 +68,14 @@ window.addEventListener( "load", function() {
     buttonDelete       = document.getElementById( "buttonDelete"       );
     buttonCheckApiKey  = document.getElementById( "buttonCheckApiKey"  );
 
-    buttonSuggestTitle.addEventListener( "click", onButtonGenerateTitleSuggestion );
-    buttonDelete.addEventListener      ( "click", onButtonDelete                  );
-    buttonCheckApiKey.addEventListener ( "click", onButtonCheckApiKey             );
+    buttonSuggestTitle.addEventListener( "click", onButtonSuggestTitle );
+    buttonDelete.addEventListener      ( "click", onButtonDelete       );
+    buttonCheckApiKey.addEventListener ( "click", onButtonCheckApiKey  );
 
     restoreSettingsFromCookies();
 
     console.log( "Initialization complete." );
 } );
-
 
 
 /**
@@ -110,9 +112,47 @@ function onGeminiModelChange( event ) {
 
 
 /**
- * Event handler function for the "Generate Title Suggestion" button.
+ * Adds title suggestions to the queue.
+ *
+ * @param {string[]} titleSuggestionArrays - An array of title suggestions to add to the queue.
  */
-async function onButtonGenerateTitleSuggestion() {
+function titleQueueEnqueue( titleSuggestionArrays ) {
+
+    titleSuggestionsArray.push( ...titleSuggestionArrays );
+}
+
+
+/**
+ * Removes a title suggestion from the queue.
+ *
+ * @returns {string|null} The removed title suggestion, or null if the queue is empty.
+ */
+function titleQueueDequeue() {
+
+    if ( titleSuggestionsArray.length > 0 ) {
+
+        return titleSuggestionsArray.shift();
+
+    } else {
+
+        return null;
+    }
+}
+
+
+/**
+ * Clears all title suggestions from the queue.
+ */
+function titleQueueClear() {
+
+    titleSuggestionsArray.length = 0;
+}
+
+
+/**
+ * Event handler function for the "Suggest Title" button.
+ */
+async function onButtonSuggestTitle() {
 
     resetAlert();
 
@@ -120,22 +160,33 @@ async function onButtonGenerateTitleSuggestion() {
 
     if ( inputText.length === 0 ) {
 
-        showAlert( "Please enter some text before generating a title suggestion.",
+        showAlert( "Please enter some text before requesting a title suggestion.",
                    "warning" );
         return;
     }
 
+    const titleFromQueue = titleQueueDequeue();
+    if ( titleFromQueue ) {
+
+        inputTitle.value = titleFromQueue;
+        return;
+    }
+
+    console.log( "Queue empty, requesting title suggestions from Gemini..." );
+
     buttonSuggestTitle.disabled = true;
     buttonDelete.disabled       = true;
     textArea.disabled           = true;
-
 
     try {
 
         const titleSuggestionsArray = await fetchTitleSuggestionsFromGemini( inputText );
         if ( titleSuggestionsArray && titleSuggestionsArray.length > 0 ) {
 
-            inputTitle.value = titleSuggestionsArray[ 0 ];
+            titleQueueEnqueue( titleSuggestionsArray );
+
+            const firstTitleSuggestion = titleQueueDequeue();
+            inputTitle.value = firstTitleSuggestion;
 
         } else {
 
@@ -162,6 +213,7 @@ async function onButtonGenerateTitleSuggestion() {
 function onButtonDelete() {
 
     resetAlert();
+    titleQueueClear();
 
     inputTitle.value = "";
     textArea.value   = "";
@@ -307,6 +359,7 @@ function restoreSettingsFromCookies() {
         console.log( "Restored model from cookie." );
     }
 }
+
 
 /**
  * Fetch title suggestions for the given input text.
