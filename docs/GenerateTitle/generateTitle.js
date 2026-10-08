@@ -26,6 +26,10 @@ let inputTitle  = null;
 let textArea    = null;
 let inputApiKey = null;
 
+let rangeSuggestionCount = null;
+let rangeTemperature     = null;
+let selectGeminiModel    = null;
+
 let buttonSuggestTitle = null;
 let buttonDelete       = null;
 let buttonCheckApiKey  = null;
@@ -41,9 +45,9 @@ let spanTemperatureValue     = null;
  */
 window.addEventListener( "load", function() {
 
-    const rangeSuggestionCount = document.getElementById( "rangeSuggestionCount" );
-    const rangeTemperature     = document.getElementById( "rangeTemperature"     );
-    const selectGeminiModel    = document.getElementById( "selectGeminiModel"    );
+    rangeSuggestionCount = document.getElementById( "rangeSuggestionCount" );
+    rangeTemperature     = document.getElementById( "rangeTemperature"     );
+    selectGeminiModel    = document.getElementById( "selectGeminiModel"    );
 
     rangeSuggestionCount.addEventListener( "input" , onRangeSuggestionCountInput );
     rangeTemperature.addEventListener(     "input" , onRangeTemperatureInput     );
@@ -283,7 +287,6 @@ function restoreSettingsFromCookies() {
     const suggestionCountCookieValue = getCookie( COOKIE_NAME_SUGGESTION_COUNT );
     if ( suggestionCountCookieValue !== null ) {
 
-        const rangeSuggestionCount = document.getElementById( "rangeSuggestionCount" );
         rangeSuggestionCount.value = suggestionCountCookieValue;
         spanSuggestionCountValue.textContent = suggestionCountCookieValue;
         console.log( "Restored suggestion count from cookie." );
@@ -292,7 +295,6 @@ function restoreSettingsFromCookies() {
     const temperatureCookieValue = getCookie( COOKIE_NAME_TEMPERATURE );
     if ( temperatureCookieValue !== null ) {
 
-        const rangeTemperature = document.getElementById( "rangeTemperature" );
         rangeTemperature.value = temperatureCookieValue;
         spanTemperatureValue.textContent = temperatureCookieValue;
         console.log( "Restored temperature from cookie." );
@@ -301,7 +303,6 @@ function restoreSettingsFromCookies() {
     const modelCookieValue = getCookie( COOKIE_NAME_MODEL );
     if ( modelCookieValue !== null ) {
 
-        const selectGeminiModel = document.getElementById( "selectGeminiModel" );
         selectGeminiModel.value = modelCookieValue;
         console.log( "Restored model from cookie." );
     }
@@ -324,7 +325,7 @@ async function fetchTitleSuggestionsFromGemini( inputText ) {
         return [];
     }
 
-    let suggestionCount = document.getElementById( "rangeSuggestionCount" ).value;
+    let suggestionCount = rangeSuggestionCount.value;
     if ( ! suggestionCount ) { suggestionCount = 5; } // Default to 5 suggestions if not set
 
     const prompt =
