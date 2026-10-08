@@ -115,6 +115,9 @@ async function onButtonGenerateTitleSuggestion() {
         return;
     }
 
+    buttonGenerateTitleSuggestion.disabled = true;
+    buttonDelete.disabled                  = true;
+
     try {
 
         const titleSuggestionsArray = await generateTitleSuggestions( inputText );
@@ -131,6 +134,11 @@ async function onButtonGenerateTitleSuggestion() {
 
         console.error( "Error generating title suggestions:", error );
         showAlert( "An error occurred while generating title suggestions.", "danger" );
+
+    } finally {
+
+        buttonGenerateTitleSuggestion.disabled = false;
+        buttonDelete.disabled                  = false;
     }
 
 }
