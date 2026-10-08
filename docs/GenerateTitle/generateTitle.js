@@ -83,9 +83,11 @@ window.addEventListener( "load", function() {
  */
 function onRangeSuggestionCountInput( event ) {
 
-    spanSuggestionCountValue.textContent = event.currentTarget.value;
+    const newValue = event.currentTarget.value;
 
-    setCookie( COOKIE_NAME_SUGGESTION_COUNT, event.currentTarget.value );
+    spanSuggestionCountValue.textContent = newValue;
+
+    setCookie( COOKIE_NAME_SUGGESTION_COUNT, newValue );
 }
 
 
@@ -107,7 +109,9 @@ function onRangeTemperatureInput( event ) {
  */
 function onGeminiModelChange( event ) {
 
-    setCookie( COOKIE_NAME_MODEL, event.currentTarget.value );
+    const newValue = event.currentTarget.value;
+
+    setCookie( COOKIE_NAME_MODEL, newValue );
 }
 
 
@@ -339,7 +343,7 @@ function restoreSettingsFromCookies() {
     const suggestionCountCookieValue = getCookie( COOKIE_NAME_SUGGESTION_COUNT );
     if ( suggestionCountCookieValue !== null ) {
 
-        rangeSuggestionCount.value = suggestionCountCookieValue;
+        rangeSuggestionCount.value           = suggestionCountCookieValue;
         spanSuggestionCountValue.textContent = suggestionCountCookieValue;
         console.log( "Restored suggestion count from cookie." );
     }
@@ -347,7 +351,7 @@ function restoreSettingsFromCookies() {
     const temperatureCookieValue = getCookie( COOKIE_NAME_TEMPERATURE );
     if ( temperatureCookieValue !== null ) {
 
-        rangeTemperature.value = temperatureCookieValue;
+        rangeTemperature.value           = temperatureCookieValue;
         spanTemperatureValue.textContent = temperatureCookieValue;
         console.log( "Restored temperature from cookie." );
     }
