@@ -8,7 +8,8 @@ const SESSION_ID = Math.floor( Math.random() * 0x10000000000 )
                        .toString( 16 )
                        .padStart( 10, "0" );
 
-let answerOptions = [];
+let answerOptions     = [];
+let copyAnswerButtons = [];
 
 let textAreaQuestion = null;
 let buttonGenerate   = null;
@@ -28,6 +29,7 @@ window.addEventListener( "load", function() {
         document.getElementById( "answerOption3" ),
         document.getElementById( "answerOption4" )
     ];
+    copyAnswerButtons = document.querySelectorAll( "[data-copy-answer]" );
 
     buttonGenerate   = document.getElementById( "buttonGenerate" );
     buttonClear      = document.getElementById( "buttonClear"    );
@@ -39,7 +41,15 @@ window.addEventListener( "load", function() {
 
     buttonClear.addEventListener( "click", onClearButtonPressed );
 
-    // ENTER triggers generation; Shift+ENTER still inserts a line break
+    for ( let i = 0; i < copyAnswerButtons.length; i++ ) {
+
+        copyAnswerButtons[i].addEventListener( "click", function() {
+
+            copyAnswerToClipboard( answerOptions[i].value );
+        } );
+    }
+
+    // ENTER triggers generation
     textAreaQuestion.addEventListener( "keydown", onQuestionKeyDown );
 } );
 
@@ -127,6 +137,7 @@ async function onGenerateButtonPressed() {
 
             answerOptions[i].value = wrongAnswers[i - 1];
         }
+        updateCopyAnswerButtons();
 
         // info box about proxy is no longer needed when first successful response is received
         alertInfo.classList.add( "d-none" );
@@ -158,6 +169,38 @@ function onClearButtonPressed() {
     for ( let answerOption of answerOptions ) {
 
         answerOption.value = "";
+    }
+    updateCopyAnswerButtons();
+}
+
+
+/**
+ * Enables copy controls only when their associated answer option has content.
+ */
+function updateCopyAnswerButtons() {
+
+    for ( let i = 0; i < copyAnswerButtons.length; i++ ) {
+
+        copyAnswerButtons[i].disabled = answerOptions[i].value.length === 0;
+    }
+}
+
+
+/**
+ * Copies an answer option to the system clipboard.
+ *
+ * @param {string} answer Answer option to copy.
+ */
+async function copyAnswerToClipboard( answer ) {
+
+    try {
+
+        await navigator.clipboard.writeText( answer );
+    }
+    catch ( error ) {
+
+        showAlert( "Could not copy the answer option to the clipboard." );
+        console.error( error );
     }
 }
 
