@@ -38,7 +38,26 @@ window.addEventListener( "load", function() {
     buttonGenerate.addEventListener( "click", onGenerateButtonPressed );
 
     buttonClear.addEventListener( "click", onClearButtonPressed );
+
+    // ENTER triggers generation; Shift+ENTER still inserts a line break
+    textAreaQuestion.addEventListener( "keydown", onQuestionKeyDown );
 } );
+
+
+/**
+ * Event handler for key presses in the question text area:
+ * ENTER triggers the "Generate" button, Shift+ENTER still inserts a line break.
+ *
+ * @param {KeyboardEvent} event Keyboard event.
+ */
+function onQuestionKeyDown( event ) {
+
+    if ( event.key === "Enter" && !event.shiftKey ) {
+
+        event.preventDefault();
+        if ( !buttonGenerate.disabled ) { buttonGenerate.click(); }
+    }
+}
 
 
 /**
