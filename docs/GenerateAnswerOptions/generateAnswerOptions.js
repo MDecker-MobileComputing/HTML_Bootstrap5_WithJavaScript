@@ -136,7 +136,7 @@ function onClearButtonPressed() {
 
     textAreaQuestion.value = "";
 
-    for ( answerOption of answerOptions ) {
+    for ( let answerOption of answerOptions ) {
 
         answerOption.value = "";
     }
