@@ -50,6 +50,9 @@ async function onGenerateButtonPressed() {
 
     resetAlert();
 
+    buttonGenerate.disabled = true;
+    buttonClear.disabled    = true;
+
     let question = textAreaQuestion.value.trim();
 
     if ( question.length === 0 ) {
@@ -75,6 +78,12 @@ async function onGenerateButtonPressed() {
                                             "Content-Type": "application/json"
                                     }
                         } );
+
+        if ( response.status === 429 ) {
+
+            showAlert( "Too many requests. Please wait 30 seconds and try again." );
+            return;
+        }
 
         if ( !response.ok ) {
 
@@ -107,6 +116,12 @@ async function onGenerateButtonPressed() {
 
         showAlert( "An error occurred while generating answer options." );
         console.error( error );
+    }
+    finally {
+
+        // enable the two buttons
+        buttonGenerate.disabled = false;
+        buttonClear.disabled    = false;
     }
 }
 
