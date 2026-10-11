@@ -1,7 +1,7 @@
 "use strict";
 
 
-const PROXY_URL = "http://localhost:8080/erzeugeAntworten";  // Proxy URL for the API call to generate answer options
+const PROXY_URL = "http://localhost:8080/generateAnswers";  // Proxy URL for the API call to generate answer options
 
 /** Random session ID (10 characters, hexadecimal) */
 const SESSION_ID = Math.floor( Math.random() * 0x10000000000 )
@@ -91,8 +91,8 @@ async function onGenerateButtonPressed() {
     }
 
     const requestObject = {
-        "frage"    : question,
-        "sitzungID": SESSION_ID
+        "question" : question,
+        "sessionID": SESSION_ID
     };
 
     const requestObjectStr = JSON.stringify( requestObject );
@@ -122,8 +122,8 @@ async function onGenerateButtonPressed() {
         // Expected format: { "richtigeAntwort": "...", "falscheAntworten": [ "...", "...", "..." ] }
         const responseObject = await response.json();
 
-        const correctAnswer = responseObject.richtigeAntwort;
-        const wrongAnswers  = responseObject.falscheAntworten;
+        const correctAnswer = responseObject.correctAnswer;
+        const wrongAnswers  = responseObject.wrongAnswers;
 
         if ( typeof correctAnswer !== "string" || !Array.isArray( wrongAnswers ) ||
              wrongAnswers.length < answerOptions.length - 1 ) {
