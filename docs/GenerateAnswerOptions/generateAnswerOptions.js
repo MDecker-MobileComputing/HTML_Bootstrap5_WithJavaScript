@@ -73,7 +73,7 @@ function onQuestionKeyDown( event ) {
 /**
  * Event handler for the "Generate" button click event.
  * Validates the question input and get answer options from AI via API call
- * to proxy.  
+ * to proxy.
  */
 async function onGenerateButtonPressed() {
 
@@ -87,6 +87,10 @@ async function onGenerateButtonPressed() {
     if ( question.length === 0 ) {
 
         showAlert( "Please enter a question." );
+
+        buttonGenerate.disabled = false;
+        buttonClear.disabled    = false;
+
         return;
     }
 
@@ -157,7 +161,7 @@ async function onGenerateButtonPressed() {
 
 
 /**
- * Event handler for the "Clear" button click event. 
+ * Event handler for the "Clear" button click event.
  * Clears the question and answer option input fields.
  */
 function onClearButtonPressed() {
@@ -207,8 +211,8 @@ async function copyAnswerToClipboard( answer ) {
 
 /**
  * Show error message in the alert box.
- * 
- * @param {string} message Error message to be displayed in the alert box. 
+ *
+ * @param {string} message Error message to be displayed in the alert box.
  */
 function showAlert( message ) {
 
