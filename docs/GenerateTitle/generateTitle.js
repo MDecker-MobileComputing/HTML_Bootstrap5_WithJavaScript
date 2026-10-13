@@ -476,12 +476,8 @@ async function fetchAvailableModelsFromGemini( apiKey ) {
 async function fetchTitleSuggestionsFromGemini( inputText ) {
 
     const apiKey = getCookie( COOKIE_NAME_API_KEY );
-    if ( ! apiKey ) {
-
-        showAlert( "API key is missing. Please enter your API key in the settings.",
-                   "danger" );
-        return [];
-    }
+    // we do not have to check if the API key is available, because this was done by
+    // the caller of this function (onButtonSuggestTitle) just before calling this function
 
     let suggestionCount = rangeSuggestionCount.value;
     if ( ! suggestionCount ) { suggestionCount = 5; } // Default to 5 suggestions if not set
