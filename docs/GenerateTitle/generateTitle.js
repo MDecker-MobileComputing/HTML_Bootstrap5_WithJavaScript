@@ -366,11 +366,11 @@ function setCookie( cookieName, cookieValue ) {
 function getCookie( cookieName ) {
 
     const cookieNamedEncoded = encodeURIComponent( cookieName );
-    const cookies            = document.cookie.split( ";" );
+    const cookieArray        = document.cookie.split( ";" );
 
-    for ( let i = 0; i < cookies.length; i++ ) {
+    for ( let i = 0; i < cookieArray.length; i++ ) {
 
-        const cookie = cookies[i].trim();
+        const cookie = cookieArray[i].trim();
 
         if ( cookie.startsWith( cookieNamedEncoded + "=" ) ) {
 
