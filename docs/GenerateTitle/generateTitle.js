@@ -288,7 +288,8 @@ async function onButtonCheckApiKey() {
 
     if ( !API_KEY_REGEXP_PATTERN.test( apiKey ) ) {
 
-        showAlert( "The API key format is invalid. Please check your input.", "danger" );
+        showAlert( "The API key format is invalid. Please check your input.",
+                   "danger" );
         return;
     }
 
@@ -477,7 +478,8 @@ async function fetchTitleSuggestionsFromGemini( inputText ) {
     const apiKey = getCookie( COOKIE_NAME_API_KEY );
     if ( ! apiKey ) {
 
-        showAlert( "API key is missing. Please enter your API key in the settings.", "danger" );
+        showAlert( "API key is missing. Please enter your API key in the settings.",
+                   "danger" );
         return [];
     }
 
