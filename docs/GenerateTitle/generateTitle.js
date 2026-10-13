@@ -207,7 +207,8 @@ async function onButtonSuggestTitle() {
     const apiKey = getCookie( COOKIE_NAME_API_KEY );
     if ( ! apiKey ) {
 
-        showAlert( "API key is missing. Please enter your API key in the settings.", "danger" );
+        showAlert( "API key is missing. Please enter your API key in the settings.",
+                   "danger" );
         return;
     }
 
@@ -226,7 +227,9 @@ async function onButtonSuggestTitle() {
 
     try {
 
-        const titleSuggestionsArray = await fetchTitleSuggestionsFromGemini( inputText );
+        const titleSuggestionsArray =
+                    await fetchTitleSuggestionsFromGemini( inputText );
+
         if ( titleSuggestionsArray && titleSuggestionsArray.length > 0 ) {
 
             titleQueueEnqueue( titleSuggestionsArray );
@@ -236,13 +239,15 @@ async function onButtonSuggestTitle() {
 
         } else {
 
-            showAlert( "No title suggestions were generated. Please try again.", "warning" );
+            showAlert( "No title suggestions were generated. Please try again.",
+                       "warning" );
         }
 
     } catch ( error ) {
 
         console.error( "Error generating title suggestions:", error );
-        showAlert( "An error occurred while generating title suggestions.", "danger" );
+        showAlert( "An error occurred while generating title suggestions.",
+                   "danger" );
 
     } finally {
 
