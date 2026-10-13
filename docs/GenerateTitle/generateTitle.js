@@ -359,6 +359,10 @@ function setCookie( cookieName, cookieValue ) {
 /**
  * Gets the value of a cookie with the specified key.
  *
+ * The function is a bit lengthy, because the browser's document.cookie API
+ * returns all cookies as a single string, and we need to parse it to find
+ * the specific cookie.
+ *
  * @param {string} cookieKey Cookie name
  *
  * @return {string|null} Cookie value or null if not found
