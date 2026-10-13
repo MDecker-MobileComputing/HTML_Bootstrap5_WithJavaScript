@@ -11,9 +11,9 @@ const COOKIE_NAME_MODEL            = "generateTitle_model";
 /** Base URL for the Gemini when OpenAI API format is used. */
 const GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions";
 
-/** 
- * Base URL for listing the models available to a Gemini API key (available models are queried to 
- * check if the API key is valid). 
+/**
+ * Base URL for listing the models available to a Gemini API key (available models are queried to
+ * check if the API key is valid).
  */
 const GEMINI_MODELS_URL = "https://generativelanguage.googleapis.com/v1beta/models";
 
@@ -429,8 +429,8 @@ function restoreSettingsFromCookies() {
  * @param {string} apiKey Gemini API key to validate
  *
  * @return {Promise<Object[]>} A promise that resolves to the available models
- * 
- * @throws {Error} Throws an error if the API key is invalid or if the response 
+ *
+ * @throws {Error} Throws an error if the API key is invalid or if the response
  *                 is not as expected
  */
 async function fetchAvailableModelsFromGemini( apiKey ) {
@@ -495,6 +495,8 @@ async function fetchTitleSuggestionsFromGemini( inputText ) {
 
     try {
 
+        // we are using the OpenAI-compatible endpoint for Gemini
+        // (Gemini has also its own endpoint format, see https://ai.google.dev/api?hl=en#authentication )
         const response = await fetch( GEMINI_BASE_URL, {
             method: "POST",
             headers: {
