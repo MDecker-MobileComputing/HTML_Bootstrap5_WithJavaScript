@@ -439,11 +439,11 @@ function restoreSettingsFromCookies() {
  */
 async function fetchAvailableModelsFromGemini( apiKey ) {
 
-    const response = await fetch(
-        GEMINI_MODELS_URL + "?key=" + encodeURIComponent( apiKey ) + "&pageSize=3"
-    );
-    // at most 3 models are returned, as we only need to check if the API key is valid
+    const url = GEMINI_MODELS_URL +
+                    "?key=" + encodeURIComponent( apiKey ) +
+                    "&pageSize=3";  // at most 3 models are returned, as we only need to check if the API key is valid
 
+    const response = await fetch( url );
     if ( !response.ok ) {
 
         throw new Error( `HTTP error! status: ${response.status}` );
