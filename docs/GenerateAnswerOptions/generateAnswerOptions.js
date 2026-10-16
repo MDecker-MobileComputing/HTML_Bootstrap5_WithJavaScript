@@ -174,6 +174,7 @@ function onClearButtonPressed() {
 
         answerOption.value = "";
     }
+
     updateCopyAnswerButtons();
 }
 
