@@ -80,25 +80,22 @@ async function onGenerateButtonPressed() {
 
     resetAlert();
 
-    buttonGenerate.disabled = true;
-    buttonClear.disabled    = true;
-
     let question = textAreaQuestion.value.trim();
 
     if ( question.length === 0 ) {
 
         showAlert( "Please enter a question." );
 
-        buttonGenerate.disabled = false;
-        buttonClear.disabled    = false;
-
         return;
     }
 
+    buttonGenerate.disabled = true;
+    buttonClear.disabled    = true;
+
     const requestObject = {
-        "question" : question,
-        "sessionID": SESSION_ID
-    };
+                            "question" : question,
+                            "sessionID": SESSION_ID
+                          };
 
     const requestObjectStr = JSON.stringify( requestObject );
 
@@ -110,7 +107,7 @@ async function onGenerateButtonPressed() {
                                         body  : requestObjectStr,
                                         headers: {
                                             "Content-Type": "application/json"
-                                    }
+                                        }
                         } );
 
         if ( response.status === 429 ) {
