@@ -121,7 +121,7 @@ async function onGenerateButtonPressed() {
             throw new Error( "Proxy returned HTTP status " + response.status );
         }
 
-        // Expected format: { "richtigeAntwort": "...", "falscheAntworten": [ "...", "...", "..." ] }
+        // Expected format: { "correctAnswer": "...", "wrongAnswers": [ "...", "...", "..." ] }
         // Example: https://gist.github.com/MDecker-MobileComputing/50b83a4b9bf211b57b0a4e2ac6b9eace
         const responseObject = await response.json();
 
