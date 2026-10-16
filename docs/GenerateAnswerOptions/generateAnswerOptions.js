@@ -3,7 +3,7 @@
 
 const PROXY_URL = "http://localhost:8080/generateAnswers";  // Proxy URL for the API call to generate answer options
 
-/** Random session ID (10 characters, hexadecimal) */
+/** Random session ID (10 characters, hexadecimal), e.g., 17ae311e63  */
 const SESSION_ID = Math.floor( Math.random() * 0x10000000000 )
                        .toString( 16 )
                        .padStart( 10, "0" );
