@@ -65,6 +65,7 @@ function onQuestionKeyDown( event ) {
     if ( event.key === "Enter" && !event.shiftKey ) {
 
         event.preventDefault();
+
         if ( !buttonGenerate.disabled ) { buttonGenerate.click(); }
     }
 }
