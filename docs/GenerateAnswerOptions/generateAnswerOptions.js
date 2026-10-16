@@ -110,7 +110,7 @@ async function onGenerateButtonPressed() {
                                         }
                         } );
 
-        if ( response.status === 429 ) {
+        if ( response.status === 429 ) { // Proxy server blocking requests due to rate limiting?
 
             showAlert( "Too many requests. Please wait 30 seconds and try again." );
             return;
