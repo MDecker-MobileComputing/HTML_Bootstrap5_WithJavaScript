@@ -141,11 +141,10 @@ async function onGenerateButtonPressed() {
 
         for ( let i = 1; i < answerOptions.length; i++ ) {
 
-            answerOptions[i].value = wrongAnswers[i - 1];
+            answerOptions[ i ].value = wrongAnswers[ i - 1 ];
         }
         updateCopyAnswerButtons();
 
-        // info box about proxy is no longer needed when first successful response is received
         alertInfo.classList.add( "d-none" );
     }
     catch ( error ) {
