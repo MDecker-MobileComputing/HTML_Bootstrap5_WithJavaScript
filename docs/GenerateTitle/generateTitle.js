@@ -139,11 +139,11 @@ function onGeminiModelChange( event ) {
 /**
  * Adds title suggestions to the queue.
  *
- * @param {string[]} titleSuggestionArrays - An array of title suggestions to add to the queue.
+ * @param {string[]} titleSuggestionArray - An array of title suggestions to add to the queue.
  */
-function titleQueueEnqueue( titleSuggestionArrays ) {
+function titleQueueEnqueue( titleSuggestionArray ) {
 
-    titleSuggestionsArray.push( ...titleSuggestionArrays );
+    titleSuggestionsArray.push( ...titleSuggestionArray );
     updateBadgeSuggestionCount();
 }
 
