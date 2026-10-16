@@ -128,10 +128,13 @@ async function onGenerateButtonPressed() {
         const correctAnswer = responseObject.correctAnswer;
         const wrongAnswers  = responseObject.wrongAnswers;
 
-        if ( typeof correctAnswer !== "string" || !Array.isArray( wrongAnswers ) ||
-             wrongAnswers.length < answerOptions.length - 1 ) {
+        if ( typeof correctAnswer !== "string"              ||
+             !Array.isArray( wrongAnswers )                 ||
+             wrongAnswers.length < answerOptions.length - 1
+           ) {
 
-            throw new Error( "Unexpected response format: " + JSON.stringify( responseObject ) );
+            throw new Error( "Unexpected response format: " +
+                                    JSON.stringify( responseObject ) );
         }
 
         answerOptions[0].value = correctAnswer;
