@@ -55,6 +55,16 @@ window.addEventListener( "load", async function() {
  */
 async function isLocalAiModelSupported() {
 
+    // So far only Chrome and Opera support the LanguageModel API
+    if ( 
+          typeof globalThis.LanguageModel              === "undefined" ||        
+          typeof globalThis.LanguageModel.availability !== "function"
+        )
+    {
+        showAlert( "The LanguageModel API is not supported by this browser.", "danger" );
+        return false;
+    }
+
     const status = await LanguageModel.availability();
 
     console.log( "Model availability status: " + status );
