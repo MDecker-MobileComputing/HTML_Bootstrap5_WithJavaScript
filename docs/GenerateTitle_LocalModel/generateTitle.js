@@ -12,16 +12,18 @@ let alertPanel  = null;
 let buttonSuggestTitle = null;
 let buttonDelete       = null;
 
+let aiSession = null;
+
 
 /**
  * Initializes the page after the DOM content has fully loaded:
  * Sets up event listeners.
  */
-window.addEventListener( "load", function() {
+window.addEventListener( "load", async function() {
 
-    inputTitle  = document.getElementById( "inputTitle"  );
-    textArea    = document.getElementById( "editor"      );
-    alertPanel  = document.getElementById( "alertPanel"  );
+    inputTitle  = document.getElementById( "inputTitle" );
+    textArea    = document.getElementById( "editor"     );
+    alertPanel  = document.getElementById( "alertPanel" );
 
     buttonSuggestTitle = document.getElementById( "buttonSuggestTitle" );
     buttonDelete       = document.getElementById( "buttonDelete"       );
@@ -29,8 +31,58 @@ window.addEventListener( "load", function() {
     buttonSuggestTitle.addEventListener( "click", onButtonSuggestTitle );
     buttonDelete.addEventListener      ( "click", onButtonDelete       );
 
+    const modelSupported = await isLocalAiModelSupported();
+    if ( modelSupported ) {
+
+        buttonSuggestTitle.disabled = false;
+        aiSession = await LanguageModel.create();
+    }
+
     console.log( "Initialization complete." );
 } );
+
+
+/**
+ * Checks if a local AI model is supported in the currenty browser environment.
+ * So far local AI models are only supported by Chrome and Opera, see also
+ * https://caniuse.com/wf-languagemodel 
+ * 
+ * However, if the local computer has not enough resources, the local model 
+ * may not be available even in a supported browser.
+ * 
+ * @returns true iff a local model is supported; if `true` is returned, the
+ *          local model might have to be downloaded first.
+ */
+async function isLocalAiModelSupported() {
+
+    const status = await LanguageModel.availability();
+
+    console.log( "Model availability status: " + status );
+
+    switch ( status ) {
+
+        case "available":
+            return true;
+            
+        case "downloadable":
+            showAlert( "The model will be downloaded at first use.", "warning" );
+            return true;
+
+        case "downloading":
+            showAlert( "The model is currently being downloaded. Please wait.", "warning" );
+            return true;
+
+        case "unavailable": 
+            showAlert( "The local model is not available in this browser or on this device.", 
+                       "danger" );
+            return false;   
+
+        default:
+            showAlert( "Unknown model status: " + status, "danger" );
+    }
+
+    return false;
+}
 
 
 /**
@@ -49,9 +101,26 @@ async function onButtonSuggestTitle() {
         return;
     }
 
+    buttonSuggestTitle.disabled = true;
     inputTitle.value = "";
 
-    // TODO ...
+    const prompt = PROMPT_TEMPLATE.replace( "%TEXT_TO_SUMMARIZE%", textToSummarize );
+
+    try {
+
+        const title = await aiSession.prompt( prompt );
+
+        inputTitle.value = title;
+
+    } catch ( error ) { 
+
+        console.error( "Error while generating title: ", error );
+        showAlert( "Error while generating title: " + error.message, "danger" );
+
+    } finally {
+
+        buttonSuggestTitle.disabled = false;
+    }
 }
 
 
@@ -64,6 +133,8 @@ function onButtonDelete() {
 
     inputTitle.value = "";
     textArea.value   = "";
+
+    buttonSuggestTitle.disabled = true;
 }
 
 
@@ -74,7 +145,7 @@ function onButtonDelete() {
  *
  * @param {string} message Text to be displayed
  *
- * @param {string} type    Type of alert: "success" (default value) or "danger" or "warning"
+ * @param {string} type    Type of alert: "success" (default value), "danger", "warning"
  */
 function showAlert( message, type="success" ) {
 
