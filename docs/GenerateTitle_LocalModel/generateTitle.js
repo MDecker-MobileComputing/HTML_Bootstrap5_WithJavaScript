@@ -213,7 +213,7 @@ function onButtonDelete() {
     inputTitle.value = "";
     textArea.value   = "";
 
-    buttonSuggestTitle.disabled = true;
+    buttonSuggestTitle.disabled = false;
 }
 
 
