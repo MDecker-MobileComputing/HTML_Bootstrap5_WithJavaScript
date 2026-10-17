@@ -40,8 +40,6 @@ window.addEventListener( "load", async function() {
 
         buttonSuggestTitle.disabled = false;
         textArea.disabled           = false;
-        
-        aiSession = await LanguageModel.create();
     }
 
     console.log( "Initialization complete." );
@@ -50,13 +48,14 @@ window.addEventListener( "load", async function() {
 
 /**
  * Checks if a local AI model is supported in the currenty browser environment.
- * So far local AI models are only supported by Chrome and Opera, see also
+ * So far local AI models are only supported by Chrome, see also
  * https://caniuse.com/wf-languagemodel 
+ * (Opera is also listed as supported, but seems not to work in Opera 137 on Windows 11).
  * 
  * However, if the local computer has not enough resources, the local model 
  * may not be available even in a supported browser.
  * 
- * @returns true iff a local model is supported; if `true` is returned, the
+ * @returns `true` iff a local model is supported; if `true` is returned, the
  *          local model might have to be downloaded first.
  */
 async function initializeLocalAI() {
@@ -71,33 +70,67 @@ async function initializeLocalAI() {
         return false;
     }
 
-    const status = await LanguageModel.availability();
+    let status = null;
+    try {
+
+        console.log( "Calling LanguageModel.availability() ..." );
+
+        // Some browsers (e.g., Opera) may never settle this promise, so a timeout is used
+        const timeoutPromise = new Promise( (_, reject) =>
+                                    setTimeout( () => reject( new Error( "availability() did not respond within 10 seconds" ) ),
+                                                10_000 ) );
+
+        status = await Promise.race( [ LanguageModel.availability(), timeoutPromise ] );
+
+    } catch ( error ) {
+
+        console.error( "Error while checking availability of local AI model: ", error );
+        showAlertForAiStatus( "Could not determine status of local AI model: " + error.message, "danger" );
+        return false;
+    }
 
     console.log( "Model availability status: " + status );
 
     switch ( status ) {
 
         case "available":
+
+            aiSession = await LanguageModel.create();
+
             showAlertForAiStatus( "Your browser supports the local AI model, it is ready for use.", 
                                   "success" );
             return true;
             
-        case "downloadable":
-            showAlertForAiStatus( "Your browser supports the local AI model, but it needs to be downloaded first.", 
-                                  "warning" );
-            return true;
 
+        case "downloadable":
         case "downloading":
+
             showAlertForAiStatus( "Your browser supports the local AI model, and it is currently being downloaded.", 
                                   "warning" );
+
+            aiSession = await LanguageModel.create({ // creation of the session will trigger the download of the model
+
+                monitor(m) {
+
+                    m.addEventListener( "downloadprogress", (e) => {
+
+                        const downloadPercentage = Math.round(e.loaded * 100);
+                        showAlertForAiStatus( `Your browser supports the local AI model, and it is currently being downloaded (${downloadPercentage}%).`, 
+                                            "warning" );
+                    });
+                }
+            });                            
             return true;
+
 
         case "unavailable": 
             showAlert( "Your browser supports the local AI model, but your computer does not have enough resources to run it.",
                        "danger" );
             return false;   
 
+
         default:
+
             showAlert( "Unknown status for local AI model: " + status, "danger" );
     }
 
