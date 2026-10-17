@@ -177,9 +177,16 @@ async function onButtonSuggestTitle() {
 
     try {
 
+        const startTime = performance.now();
+
         const title = await aiSession.prompt( prompt );
 
+        const durationSeconds = ( performance.now() - startTime ) / 1000;
+
         inputTitle.value = title;
+
+        showAlertForTitleGeneration( `Title generated in ${durationSeconds.toFixed(1)} seconds.`,
+                                     "success" );
 
     } catch ( error ) { 
 
