@@ -3,7 +3,7 @@
 
 /** Prompt with placeholders for the number of title suggestions and the text to summarize. */
 const PROMPT_TEMPLATE=
-          `Erzeuge mir einen einzigen Titel für den folgenden Text ohne weitere Erklärungen oder Formatierungen: %TEXT_TO_SUMMARIZE%`;
+          `Generate a single title for the following text without any further explanations or formatting: %TEXT_TO_SUMMARIZE%`;
 
 let inputTitle  = null;
 let textArea    = null;
@@ -44,7 +44,7 @@ async function onButtonSuggestTitle() {
 
     if ( textToSummarize.length === 0 ) {
 
-        showAlert( "Bitte geben Sie einen Text ein, um einen Titel zu generieren.",
+        showAlert( "Please enter some text to generate a title.",
                    "warning" );
         return;
     }
