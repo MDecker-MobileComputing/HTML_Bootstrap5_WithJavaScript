@@ -116,6 +116,7 @@ function setCanvasSize() {
  * Set an event handler for a click event.
  *
  * @param {*} id ID of the element for which the event handler should be registered
+ * 
  * @param {*} eventHandlerFunction Event-handler function
  */
 function registerClickHandlerForShape( id, eventHandlerFunction ) {
