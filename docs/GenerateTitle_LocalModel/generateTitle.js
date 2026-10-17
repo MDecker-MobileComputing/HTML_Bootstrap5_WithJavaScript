@@ -70,13 +70,13 @@ window.addEventListener( "load", async function() {
  */
 async function initializeLocalAI() {
 
-    // So far only Chrome and Opera support the LanguageModel API
     if ( 
           typeof globalThis.LanguageModel              === "undefined" ||        
           typeof globalThis.LanguageModel.availability !== "function"
         )
     {
-        showAlertForAiStatus( "The LanguageModel API is not supported by this browser.", "danger" );
+        showAlertForAiStatus( "The LanguageModel API is not supported by this browser.", 
+                              "danger" );
         return false;
     }
 
@@ -85,10 +85,11 @@ async function initializeLocalAI() {
 
         console.log( "Calling LanguageModel.availability() ..." );
 
-        // Some browsers (e.g., Opera) may never settle this promise, so a timeout of 10 seconds is used
-        const timeoutPromise = new Promise( (_, reject) =>
-                                    setTimeout( () => reject( new Error( "availability() did not respond within 10 seconds" ) ),
-                                                10_000 ) );
+        const timeoutPromise = 
+                    new Promise( (_, reject) =>
+                                 setTimeout( () => reject( 
+                                        new Error( "availability() did not respond within 10 seconds." ) ),
+                                 10_000 ) );
 
         status = await Promise.race( [ LanguageModel.availability(), timeoutPromise ] );
 
