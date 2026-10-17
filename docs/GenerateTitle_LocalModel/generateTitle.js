@@ -85,7 +85,7 @@ async function initializeLocalAI() {
 
         console.log( "Calling LanguageModel.availability() ..." );
 
-        // Some browsers (e.g., Opera) may never settle this promise, so a timeout is used
+        // Some browsers (e.g., Opera) may never settle this promise, so a timeout of 10 seconds is used
         const timeoutPromise = new Promise( (_, reject) =>
                                     setTimeout( () => reject( new Error( "availability() did not respond within 10 seconds" ) ),
                                                 10_000 ) );
@@ -207,8 +207,6 @@ function onButtonDelete() {
 
     buttonSuggestTitle.disabled = true;
 }
-
-
 
 
 /**
