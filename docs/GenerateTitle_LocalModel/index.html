@@ -19,6 +19,9 @@
 
             <h1 class="text-center my-3">Editor with Automatic Title Generation (Local Model)</h1><!-- my-5: margin top+bottom -->
 
+            <div id="alertPanelLocalAiStatus" class="alert d-none mb-5" role="alert">
+            </div>
+
             <form>
 
                 <div class="mb-5">
@@ -29,7 +32,7 @@
 
                 <div class="mb-3">
                     <label for="editor" class="form-label fs-5 fw-bold">Text</label>
-                    <textarea id="editor" class="form-control" rows="12"
+                    <textarea id="editor" class="form-control" rows="12" disabled
                               placeholder="Write your report here"></textarea>
                 </div>
 
@@ -51,7 +54,7 @@
 
             </form>
 
-            <div id="alertPanel" class="alert d-none" role="alert">
+            <div id="alertPanelTitleGeneration" class="alert d-none" role="alert">
                     Alert text will be displayed here. It can be used to show success or error messages.
             </div>
 

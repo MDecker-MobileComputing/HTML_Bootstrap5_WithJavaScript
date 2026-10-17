@@ -7,7 +7,9 @@ const PROMPT_TEMPLATE=
 
 let inputTitle  = null;
 let textArea    = null;
-let alertPanel  = null;
+
+let alertPanelLocalAiStatus   = null;
+let alertPanelTitleGeneration = null;
 
 let buttonSuggestTitle = null;
 let buttonDelete       = null;
@@ -23,7 +25,9 @@ window.addEventListener( "load", async function() {
 
     inputTitle  = document.getElementById( "inputTitle" );
     textArea    = document.getElementById( "editor"     );
-    alertPanel  = document.getElementById( "alertPanel" );
+    
+    alertPanelLocalAiStatus   = document.getElementById( "alertPanelLocalAiStatus"   );
+    alertPanelTitleGeneration = document.getElementById( "alertPanelTitleGeneration" );
 
     buttonSuggestTitle = document.getElementById( "buttonSuggestTitle" );
     buttonDelete       = document.getElementById( "buttonDelete"       );
@@ -31,10 +35,12 @@ window.addEventListener( "load", async function() {
     buttonSuggestTitle.addEventListener( "click", onButtonSuggestTitle );
     buttonDelete.addEventListener      ( "click", onButtonDelete       );
 
-    const modelSupported = await isLocalAiModelSupported();
-    if ( modelSupported ) {
+    const aiSupported = await initializeLocalAI();
+    if ( aiSupported ) {
 
         buttonSuggestTitle.disabled = false;
+        textArea.disabled           = false;
+        
         aiSession = await LanguageModel.create();
     }
 
@@ -53,7 +59,7 @@ window.addEventListener( "load", async function() {
  * @returns true iff a local model is supported; if `true` is returned, the
  *          local model might have to be downloaded first.
  */
-async function isLocalAiModelSupported() {
+async function initializeLocalAI() {
 
     // So far only Chrome and Opera support the LanguageModel API
     if ( 
@@ -61,7 +67,7 @@ async function isLocalAiModelSupported() {
           typeof globalThis.LanguageModel.availability !== "function"
         )
     {
-        showAlert( "The LanguageModel API is not supported by this browser.", "danger" );
+        showAlertForAiStatus( "The LanguageModel API is not supported by this browser.", "danger" );
         return false;
     }
 
@@ -72,23 +78,27 @@ async function isLocalAiModelSupported() {
     switch ( status ) {
 
         case "available":
+            showAlertForAiStatus( "Your browser supports the local AI model, it is ready for use.", 
+                                  "success" );
             return true;
             
         case "downloadable":
-            showAlert( "The model will be downloaded at first use.", "warning" );
+            showAlertForAiStatus( "Your browser supports the local AI model, but it needs to be downloaded first.", 
+                                  "warning" );
             return true;
 
         case "downloading":
-            showAlert( "The model is currently being downloaded. Please wait.", "warning" );
+            showAlertForAiStatus( "Your browser supports the local AI model, and it is currently being downloaded.", 
+                                  "warning" );
             return true;
 
         case "unavailable": 
-            showAlert( "The local model is not available in this browser or on this device.", 
+            showAlert( "Your browser supports the local AI model, but your computer does not have enough resources to run it.",
                        "danger" );
             return false;   
 
         default:
-            showAlert( "Unknown model status: " + status, "danger" );
+            showAlert( "Unknown status for local AI model: " + status, "danger" );
     }
 
     return false;
@@ -100,7 +110,7 @@ async function isLocalAiModelSupported() {
  */
 async function onButtonSuggestTitle() {
 
-    resetAlert();
+    resetAlertForTitleGeneration();
 
     const textToSummarize = textArea.value.trim();
 
@@ -139,7 +149,7 @@ async function onButtonSuggestTitle() {
  */
 function onButtonDelete() {
 
-    resetAlert();
+    resetAlertForTitleGeneration();
 
     inputTitle.value = "";
     textArea.value   = "";
@@ -151,27 +161,44 @@ function onButtonDelete() {
 
 
 /**
- * Displays an alert message in the settings section with the specified message and type.
+ * Displays an alert message about the local AI status.
  *
  * @param {string} message Text to be displayed
  *
  * @param {string} type    Type of alert: "success" (default value), "danger", "warning"
  */
-function showAlert( message, type="success" ) {
+function showAlertForAiStatus( message, type="success" ) {
 
-    alertPanel.textContent = message;
+    alertPanelLocalAiStatus.textContent = message;
 
-    alertPanel.classList.add( "alert-" + type );
-    alertPanel.classList.remove( "d-none" );
+    alertPanelLocalAiStatus.classList.add( "alert-" + type );
+    alertPanelLocalAiStatus.classList.remove( "d-none" );
 }
 
 
 /**
- * Hides the alert message and resets the alert panel to its default state.
+ * Displays an alert message about the title generation.
+ *
+ * @param {string} message Text to be displayed
+ * 
+ * @param {string} type    Type of alert: "success" (default value), "danger", "warning"
  */
-function resetAlert() {
+function showAlertForTitleGeneration( message, type="success" ) {
 
-    alertPanel.textContent = "";
-    alertPanel.classList.remove( "alert-success", "alert-danger", "alert-warning" );
-    alertPanel.classList.add( "d-none" );
+    alertPanelTitleGeneration.textContent = message;
+
+    alertPanelTitleGeneration.classList.add( "alert-" + type );
+    alertPanelTitleGeneration.classList.remove( "d-none" );
+}
+
+
+/**
+ * Resets the alert message for the title generator: hides the alert panel and removes 
+ * any previous alert type classes.
+ */
+function resetAlertForTitleGeneration() {
+
+    alertPanelTitleGeneration.textContent = "";
+    alertPanelTitleGeneration.classList.remove( "alert-success", "alert-danger", "alert-warning" );
+    alertPanelTitleGeneration.classList.add( "d-none" );
 }
