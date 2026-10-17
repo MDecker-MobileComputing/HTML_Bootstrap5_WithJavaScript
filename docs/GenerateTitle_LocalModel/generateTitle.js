@@ -8,15 +8,18 @@ const PROMPT_TEMPLATE =
           "The title must be written in the same language as the text: " +
           "%TEXT_TO_SUMMARIZE%";
 
-          
-let inputTitle  = null;
-let textArea    = null;
+
+let inputTitle = null;
+let textArea   = null;
 
 let alertPanelLocalAiStatus   = null;
 let alertPanelTitleGeneration = null;
 
 let buttonSuggestTitle = null;
 let buttonDelete       = null;
+
+let spinnerSuggestTitle = null;
+let labelSuggestTitle   = null;
 
 let aiSession = null;
 
@@ -35,6 +38,9 @@ window.addEventListener( "load", async function() {
 
     buttonSuggestTitle = document.getElementById( "buttonSuggestTitle" );
     buttonDelete       = document.getElementById( "buttonDelete"       );
+
+    spinnerSuggestTitle = document.getElementById( "spinnerSuggestTitle" );
+    labelSuggestTitle   = document.getElementById( "labelSuggestTitle"   );
 
     buttonSuggestTitle.addEventListener( "click", onButtonSuggestTitle );
     buttonDelete.addEventListener      ( "click", onButtonDelete       );
@@ -132,14 +138,14 @@ async function initializeLocalAI() {
 
 
         case "unavailable": 
-            showAlert( "Your browser supports the local AI model, but your computer does not have enough resources to run it.",
-                       "danger" );
+            showAlertForAiStatus( "Your browser supports the local AI model, but your computer does not have enough resources to run it.",
+                                  "danger" );
             return false;   
 
 
         default:
 
-            showAlert( "Unknown status for local AI model: " + status, "danger" );
+            showAlertForAiStatus( "Unknown status for local AI model: " + status, "danger" );
     }
 
     return false;
@@ -157,12 +163,14 @@ async function onButtonSuggestTitle() {
 
     if ( textToSummarize.length === 0 ) {
 
-        showAlert( "Please enter some text to generate a title.",
-                   "warning" );
+        showAlertForTitleGeneration( "Please enter some text to generate a title.",
+                                     "warning" );
         return;
     }
 
     buttonSuggestTitle.disabled = true;
+    spinnerSuggestTitle.classList.remove( "d-none" );
+    labelSuggestTitle.textContent = "Generating ...";
     inputTitle.value = "";
 
     const prompt = PROMPT_TEMPLATE.replace( "%TEXT_TO_SUMMARIZE%", textToSummarize );
@@ -176,10 +184,12 @@ async function onButtonSuggestTitle() {
     } catch ( error ) { 
 
         console.error( "Error while generating title: ", error );
-        showAlert( "Error while generating title: " + error.message, "danger" );
+        showAlertForTitleGeneration( "Error while generating title: " + error.message, "danger" );
 
     } finally {
 
+        spinnerSuggestTitle.classList.add( "d-none" );
+        labelSuggestTitle.textContent = "Suggest Title";
         buttonSuggestTitle.disabled = false;
     }
 }
