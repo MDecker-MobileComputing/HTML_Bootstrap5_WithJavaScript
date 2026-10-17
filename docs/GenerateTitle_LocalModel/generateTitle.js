@@ -2,9 +2,13 @@
 
 
 /** Prompt with placeholders for the number of title suggestions and the text to summarize. */
-const PROMPT_TEMPLATE=
-          `Generate a single title for the following text without any further explanations or formatting: %TEXT_TO_SUMMARIZE%`;
+const PROMPT_TEMPLATE =
+          "Generate a single title for the following text "              +
+          "without any further explanations or formatting. "             +
+          "The title must be written in the same language as the text: " +
+          "%TEXT_TO_SUMMARIZE%";
 
+          
 let inputTitle  = null;
 let textArea    = null;
 
@@ -115,11 +119,15 @@ async function initializeLocalAI() {
                     m.addEventListener( "downloadprogress", (e) => {
 
                         const downloadPercentage = Math.round(e.loaded * 100);
-                        showAlertForAiStatus( `Your browser supports the local AI model, and it is currently being downloaded (${downloadPercentage}%).`, 
-                                            "warning" );
+                        showAlertForAiStatus( 
+                            `Your browser supports the local AI model, and it is currently being downloaded (${downloadPercentage}%).`, 
+                            "warning" );
                     });
                 }
-            });                            
+            });
+
+            showAlertForAiStatus( "Your browser supports the local AI model, it is ready for use.",
+                                  "success" );
             return true;
 
 
@@ -204,6 +212,7 @@ function showAlertForAiStatus( message, type="success" ) {
 
     alertPanelLocalAiStatus.textContent = message;
 
+    alertPanelLocalAiStatus.classList.remove( "alert-success", "alert-danger", "alert-warning" );
     alertPanelLocalAiStatus.classList.add( "alert-" + type );
     alertPanelLocalAiStatus.classList.remove( "d-none" );
 }
