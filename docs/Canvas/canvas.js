@@ -24,7 +24,7 @@ let chartJsDiagram = null;
  * from resizing itself to fit the canvas element.
  */
 const chartJsOptions = {
-                            responsive: false,
+                            responsive         : false,
                             maintainAspectRatio: false,
                             scales: {
                                 y: { beginAtZero: true }
