@@ -78,7 +78,8 @@ async function initializeLocalAI() {
           typeof globalThis.LanguageModel.availability !== "function"
         )
     {
-        showAlertForAiStatus( "The LanguageModel API is not supported by this browser.", 
+        showAlertForAiStatus( "The LanguageModel API is not supported by this browser " + 
+                              "(it is currently only supported by Chrome).", 
                               "danger" );
         return false;
     }
@@ -99,7 +100,9 @@ async function initializeLocalAI() {
     } catch ( error ) {
 
         console.error( "Error while checking availability of local AI model: ", error );
-        showAlertForAiStatus( "Could not determine status of local AI model: " + error.message, "danger" );
+        showAlertForAiStatus( 
+            "Could not determine status of local AI model (it is currently only supported by Chrome): " + error.message, 
+            "danger" );
         return false;
     }
 
@@ -201,7 +204,7 @@ async function onButtonSuggestTitle() {
 
         spinnerSuggestTitle.classList.add( "d-none" );
         labelSuggestTitle.textContent = "Suggest Title";
-        buttonSuggestTitle.disabled = false;
+        buttonSuggestTitle.disabled   = false;
     }
 }
 
