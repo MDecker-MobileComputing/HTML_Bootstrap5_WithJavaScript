@@ -70,6 +70,9 @@ window.addEventListener( "load", async function() {
  */
 async function initializeLocalAI() {
 
+    showAlertForAiStatus( "Checking if your browser supports the local AI model ...", 
+                          "warning" );
+
     if ( 
           typeof globalThis.LanguageModel              === "undefined" ||        
           typeof globalThis.LanguageModel.availability !== "function"
