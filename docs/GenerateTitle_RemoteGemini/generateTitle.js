@@ -93,6 +93,12 @@ window.addEventListener( "load", function() {
         return new bootstrap.Tooltip( tooltipTriggerEl );
     });
 
+    if ( window.location.protocol === "file:" ) {
+
+        showAlert( "Page must be served over HTTP(s) to enabled cookies.",
+                   "warning" );
+    }
+
     console.log( "Initialization complete." );
 } );
 
